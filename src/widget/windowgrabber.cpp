@@ -88,8 +88,7 @@ p_( new Private( this ) ) {
 void WindowGrabber::grab() {
 	QPixmap pm( grabWindow( this->p_->windows ) );
 	this->show();
-	this->move( this->p_->windows.back().topLeft() );
-	this->resize( pm.size() );
+	this->setGeometry( this->p_->windows.back() );
 	// NOTE hack for macosx
 	for( std::vector< QRect >::iterator it = this->p_->windows.begin(); it != this->p_->windows.end(); ++it ) {
 		it->translate( -this->pos() );
@@ -99,7 +98,6 @@ void WindowGrabber::grab() {
 	this->setPalette( p );
 	this->setFixedSize( pm.size() );
 	this->setMouseTracking( true );
-//	this->setGeometry( QRect() );
 	this->p_->current = this->p_->windowIndex( this->mapFromGlobal( QCursor::pos() ) );
 }
 
