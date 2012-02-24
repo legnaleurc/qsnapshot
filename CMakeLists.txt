@@ -1,0 +1,94 @@
+#    QSnapshot, a screen capture tool.
+#    Copyright (C)  2012 Wei Cheng Pan <legnaleurc@gmail>
+#
+#    This library is free software; you can redistribute it and/or
+#    modify it under the terms of the GNU Lesser General Public
+#    License as published by the Free Software Foundation; either
+#    version 2.1 of the License, or (at your option) any later version.
+#
+#    This library is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public
+#    License along with this library; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+cmake_minimum_required(VERSION 2.6)
+
+project(QSnapshot)
+set(QSNAPSHOT_VERSION_MAJOR "0")
+set(QSNAPSHOT_VERSION_MINOR "1")
+set(QSNAPSHOT_VERSION_PATCH "0")
+set(QSNAPSHOT_VERSION "${QSNAPSHOT_VERSION_MAJOR}.${QSNAPSHOT_VERSION_MINOR}.${QSNAPSHOT_VERSION_PATCH}")
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
+find_package(Qt4 4.7)
+
+include(${QT_USE_FILE})
+
+add_definitions(-DQSNAPSHOT_VERSION=${QSNAPSHOT_VERSION} -DQSNAPSHOT_VERSION_MAJOR=${QSNAPSHOT_VERSION_MAJOR} -DQSNAPSHOT_VERSION_MINOR=${QSNAPSHOT_VERSION_MINOR} -DQSNAPSHOT_VERSION_PATCH=${QSNAPSHOT_VERSION_PATCH})
+set(CMAKE_DEBUG_POSTFIX d)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pedantic -Wextra -Wall -pipe")
+endif()
+
+# hack MSVC path
+if(MSVC)
+    set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
+else()
+    set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
+endif()
+
+file(GLOB_RECURSE QSNAPSHOT_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.hpp)
+file(GLOB_RECURSE QSNAPSHOT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
+file(GLOB_RECURSE QSNAPSHOT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.ui)
+if(APPLE)
+    file(GLOB_RECURSE QSNAPSHOT_PLATFORM_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} macosx/utility/*)
+    add_subdirectory("macosx/cocoa")
+    include_directories("macosx/cocoa/include")
+    find_library(COCOA_LIBRARY Cocoa)
+elseif(UNIX)
+    file(GLOB_RECURSE QSNAPSHOT_PLATFORM_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} x11/*.cpp)
+elseif(WIN32)
+    file(GLOB_RECURSE QSNAPSHOT_PLATFORM_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} windows/*.cpp)
+endif()
+
+include_directories(
+    "src"
+    ${CMAKE_CURRENT_BINARY_DIR})
+
+set(QSNAPSHOT_MOC_HEADERS "")
+foreach(header ${QSNAPSHOT_HEADERS})
+    file(STRINGS ${header} moc_token REGEX "Q_OBJECT")
+    if(moc_token)
+        list(APPEND QSNAPSHOT_MOC_HEADERS ${header})
+    endif()
+endforeach()
+
+qt4_wrap_cpp(QSNAPSHOT_MOC_SOURCES ${QSNAPSHOT_MOC_HEADERS})
+qt4_wrap_ui(QSNAPSHOT_UIC_HEADERS ${QSNAPSHOT_FORMS})
+
+source_group("Generated Files" FILES ${QSNAPSHOT_MOC_SOURCES} ${QSNAPSHOT_RCC_SOURCES} ${QSNAPSHOT_UIC_HEADERS})
+source_group("Resource Files" REGULAR_EXPRESSION .*\\.rc)
+source_group("Form Files" REGULAR_EXPRESSION .*\\.ui)
+
+set(QSNAPSHOT_COMPILE_UNITS ${QSNAPSHOT_HEADERS} ${QSNAPSHOT_SOURCES} ${QSNAPSHOT_PLATFORM_SOURCES} ${QSNAPSHOT_MOC_SOURCES} ${QSNAPSHOT_UIC_HEADERS} ${QSNAPSHOT_RCC_SOURCES})
+set(QSNAPSHOT_LINKING_UNITS ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+
+if(MSVC)
+    add_executable(qsnapshot WIN32 ${QSNAPSHOT_COMPILE_UNITS})
+    target_link_libraries(qsnapshot ${QSNAPSHOT_LINKING_UNITS} ${QT_QTMAIN_LIBRARY})
+else()
+    add_executable(qsnapshot ${QSNAPSHOT_COMPILE_UNITS})
+    target_link_libraries(qsnapshot ${QSNAPSHOT_LINKING_UNITS})
+    if(APPLE)
+        add_dependencies(qsnapshot cocoa)
+        target_link_libraries(qsnapshot cocoa ${COCOA_LIBRARY})
+    endif()
+endif()
+set_target_properties(qsnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
+
+install(TARGETS qsnapshot DESTINATION "bin")
