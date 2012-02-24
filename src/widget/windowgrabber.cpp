@@ -86,6 +86,7 @@ p_( new Private( this ) ) {
 }
 
 void WindowGrabber::grab() {
+	this->p_->windows.clear();
 	QPixmap pm( grabWindow( this->p_->windows ) );
 	this->show();
 	this->setGeometry( this->p_->windows.back() );
