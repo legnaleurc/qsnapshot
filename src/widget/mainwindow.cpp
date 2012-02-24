@@ -54,6 +54,9 @@ modified( false ) {
 	this->grabber->move( 0, 0 );
 	this->grabber->setWindowOpacity( 0.1 );
 	this->grabber->resize( QApplication::desktop()->screenGeometry().size() );
+	QPalette p = this->grabber->palette();
+	p.setBrush( this->grabber->backgroundRole(), QColor( 0, 0, 0 ) );
+	this->grabber->setPalette( p );
 
 #ifdef HAVE_X11_EXTENSIONS_XFIXES_H
 	{
