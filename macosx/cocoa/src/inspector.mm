@@ -86,25 +86,24 @@ bool operator< ( const QRect& r1, const QRect& r2 ) {
 }
 
 Inspector::Private::Private( Inspector * host ):
-host( host ),
-systemWideElement( AXUIElementCreateSystemWide() ),
-currentUIElement( NULL ),
-lastMousePoint() {
-}
-
-Inspector::Private::~Private() {
-	if( this->systemWideElement ) {
-		CFRelease( this->systemWideElement );
-	}
+host( host ) {
 }
 
 AXUIElementRef Inspector::Private::getCurrentUIElement() const {
-	return this->currentUIElement;
-}
+	NSPoint cocoaPoint = [NSEvent mouseLocation];
+	CGPoint pointAsCGPoint = [UIElementUtilities carbonScreenPointFromCocoaScreenPoint:cocoaPoint];
+	AXUIElementRef systemWideElement = AXUIElementCreateSystemWide();
+	AXUIElementRef newElement = nil;
 
-void Inspector::Private::setCurrentUIElement( AXUIElementRef uiElement ) {
-	[(id) this->currentUIElement autorelease];
-	this->currentUIElement = (AXUIElementRef)[(id) uiElement retain];
+	// Ask Accessibility API for UI Element under the mouse
+	// And update the display if a different UIElement
+	AXError result = AXUIElementCopyElementAtPosition( systemWideElement, pointAsCGPoint.x, pointAsCGPoint.y, &newElement );
+	CFRelease( systemWideElement );
+	if( result != kAXErrorSuccess || !newElement ) {
+		return nil;
+	}
+	AXUIElementRef currentUIElement = lineageOfUIElement( newElement );
+	return currentUIElement;
 }
 
 Inspector::Inspector():
@@ -112,25 +111,24 @@ p_( new Private( this ) ) {
 }
 
 QPixmap Inspector::grabWindow( std::vector< QRect > & windows ) {
-	NSPoint cocoaPoint = [NSEvent mouseLocation];
-	CGPoint pointAsCGPoint = [UIElementUtilities carbonScreenPointFromCocoaScreenPoint:cocoaPoint];
-	AXUIElementRef newElement = NULL;
-
-	// Ask Accessibility API for UI Element under the mouse
-	// And update the display if a different UIElement
-	AXError result = AXUIElementCopyElementAtPosition( this->p_->systemWideElement, pointAsCGPoint.x, pointAsCGPoint.y, &newElement );
-	if( result == kAXErrorSuccess && newElement && ( this->p_->getCurrentUIElement() == NULL || ! CFEqual( this->p_->getCurrentUIElement(), newElement ) ) ) {
-		this->p_->setCurrentUIElement( lineageOfUIElement( newElement ) );
-		QRect r( rectOfElement( this->p_->getCurrentUIElement() ) );
-		windows.push_back( r );
-		getWindows( windows, this->p_->getCurrentUIElement() );
-		std::sort( windows.begin(), windows.end() );
-		if ( r.isNull() ) {
-			return QPixmap();
-		}
-		return QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() );
+	AXUIElementRef currentUIElement = this->p_->getCurrentUIElement();
+	QRect r( rectOfElement( currentUIElement ) );
+	if ( r.isEmpty() ) {
+		return QPixmap();
 	}
 
-	this->p_->lastMousePoint = cocoaPoint;
-	return QPixmap();
+	windows.push_back( r );
+	getWindows( windows, this->p_->getCurrentUIElement() );
+	std::sort( windows.begin(), windows.end() );
+	return QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() );
+}
+
+QPair< QPixmap, QPoint > Inspector::grabCurrent( bool /*includeDecorations*/ ) {
+	AXUIElementRef currentUIElement = this->p_->getCurrentUIElement();
+	QRect r( rectOfElement( currentUIElement ) );
+	if( r.isEmpty() ) {
+		return QPair< QPixmap, QPoint >();
+	}
+	QPixmap pm( QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() ) );
+	return qMakePair( pm, r.topLeft() );
 }

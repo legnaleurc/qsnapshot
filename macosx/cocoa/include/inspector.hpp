@@ -23,6 +23,7 @@
 #include <QtCore/QPoint>
 #include <QtGui/QPixmap>
 #include <QtCore/QRect>
+#include <QtCore/QPair>
 
 #include <vector>
 
@@ -31,6 +32,7 @@ public:
 	Inspector();
 
 	QPixmap grabWindow( std::vector< QRect > & windows );
+	QPair< QPixmap, QPoint > grabCurrent( bool includeDecorations );
 
 private:
 	class Private;
