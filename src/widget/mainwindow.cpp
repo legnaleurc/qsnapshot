@@ -21,6 +21,7 @@
 #include <QtGui/QDesktopWidget>
 #include <QtCore/QTimer>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QFileDialog>
 
 #include <QtCore/QtDebug>
 
@@ -78,9 +79,21 @@ modified( false ) {
 	}
 
 	this->connect( this->ui.newSnapshot, SIGNAL( clicked() ), SLOT( grab() ) );
+	this->connect( this->ui.saveAs, SIGNAL( clicked() ), SLOT( onSaveAs() ) );
 	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( onGrabTimerTimeout() ) );
 	this->connect( this->regionGrabber, SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
+}
+
+void MainWindow::Private::onSaveAs() {
+	if( this->snapshot.isNull() ) {
+		return;
+	}
+	QString filePath = QFileDialog::getSaveFileName( this->host, QObject::tr( "Save Captured Picture" ), QDir::currentPath(), "*.png (PNG files)" );
+	if( filePath.isEmpty() ) {
+		return;
+	}
+	this->snapshot.save( filePath );
 }
 
 void MainWindow::Private::grab() {

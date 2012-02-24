@@ -45,6 +45,7 @@ namespace qsnapshot {
 			bool includeDecorations() const;
 
 		public slots:
+			void onSaveAs();
 			void grab();
 			void startUndelayedGrab();
 			void onRegionGrabbed( const QPixmap & p );
