@@ -87,17 +87,18 @@ p_( new Private( this ) ) {
 
 void WindowGrabber::grab() {
 	this->p_->windows.clear();
-	QPixmap pm( grabWindow( this->p_->windows ) );
+	std::tuple< QPixmap, QRect, std::vector< QRect > > result( grabWindow() );
+	this->p_->windows = std::get< 2 >( result );
 	this->show();
-	this->setGeometry( this->p_->windows.back() );
+	this->setGeometry( std::get< 1 >( result ) );
 	// NOTE hack for macosx
-	for( std::vector< QRect >::iterator it = this->p_->windows.begin(); it != this->p_->windows.end(); ++it ) {
-		it->translate( -this->pos() );
-	}
+//	for( std::vector< QRect >::iterator it = this->p_->windows.begin(); it != this->p_->windows.end(); ++it ) {
+//		it->translate( -this->pos() );
+//	}
 	QPalette p = this->palette();
-	p.setBrush( this->backgroundRole(), QBrush( pm ) );
+	p.setBrush( this->backgroundRole(), QBrush( std::get< 0 >( result ) ) );
 	this->setPalette( p );
-	this->setFixedSize( pm.size() );
+	this->setFixedSize( std::get< 0 >( result ).size() );
 	this->setMouseTracking( true );
 	this->p_->current = this->p_->windowIndex( this->mapFromGlobal( QCursor::pos() ) );
 }

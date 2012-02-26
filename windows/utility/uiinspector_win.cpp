@@ -25,8 +25,10 @@
 namespace {
 
 	const int minSize = 8;
+	uint cxWindowBorder;
+	uint cyWindowBorder;
 
-	QPixmap grabWindow( HWND hWnd, QString *title=0, QString *windowClass=0 ) {
+	QPixmap grabWindow( HWND hWnd ) {
 		RECT windowRect;
 		GetWindowRect(hWnd, &windowRect);
 		int w = windowRect.right - windowRect.left;
@@ -42,14 +44,6 @@ namespace {
 		DeleteDC(hDC);
 		ReleaseDC(hWnd, targetDC);
 
-//		KWindowInfo winInfo( findRealWindow(hWnd), NET::WMVisibleName, NET::WM2WindowClass );
-		if ( title ) {
-//			(*title) = winInfo.visibleName();
-		}
-
-		if ( windowClass ) {
-//			(*windowClass) = winInfo.windowClassName();
-		}
 		return pm;
 	}
 
@@ -85,8 +79,8 @@ namespace {
 		// For some reason, rect.left and rect.top are shifted by cxWindowBorders and cyWindowBorders pixels respectively
 		// in *every* case (for every window), but cxWindowBorders and cyWindowBorders are non-zero only in the
 		// biggest-window case, therefore we need to save the biggest cxWindowBorders and cyWindowBorders to adjust the rect later
-		uint cxWindowBorder = qMax( cxWindowBorder, wi.cxWindowBorders );
-		uint cyWindowBorder = qMax( cyWindowBorder, wi.cyWindowBorders );
+		cxWindowBorder = qMax( cxWindowBorder, wi.cxWindowBorders );
+		cyWindowBorder = qMax( cyWindowBorder, wi.cyWindowBorders );
 
 		if ( ( ( wi.dwStyle & WS_VISIBLE ) != 0 ) && (width >= minSize ) && (height >= minSize ) ) {
 			//QRect r( rect.left + 4, rect.top + 4, width, height); // 4 = max(wi.cxWindowBorders) = max(wi.cyWindowBorders)
@@ -118,7 +112,7 @@ bool operator< ( const QRect& r1, const QRect& r2 ) {
 	return r1.width() * r1.height() < r2.width() * r2.height();
 }
 
-QPixmap qsnapshot::utility::grabWindow( std::vector< QRect > & windows ) {
+std::tuple< QPixmap, QRect, std::vector< QRect > > qsnapshot::utility::grabWindow() {
 	HWND child = windowUnderCursor();
 
 	WINDOWINFO wi;
@@ -130,19 +124,22 @@ QPixmap qsnapshot::utility::grabWindow( std::vector< QRect > & windows ) {
 	int y = r.top;
 	uint w = r.right - r.left;
 	uint h = r.bottom - r.top;
-	uint cxWindowBorder = wi.cxWindowBorders;
-	uint cyWindowBorder = wi.cyWindowBorders;
+	cxWindowBorder = wi.cxWindowBorders;
+	cyWindowBorder = wi.cyWindowBorders;
 
 	HDC childDC = GetDC(child);
 	Q_UNUSED( childDC );
 
-	QString title;
-	QString windowClass;
-
-	QPixmap pm( ::grabWindow( child, &title, &windowClass ) );
+	QPixmap pm( ::grabWindow( child ) );
+	std::vector< QRect > windows;
 	getWindowsRecursive( windows, child );
+	QRect windowGeometry( QPoint( r.left, r.top ), pm.size() );
+	QPoint offset( r.left + wi.cxWindowBorders, r.top + wi.cyWindowBorders );
+	std::for_each( windows.begin(), windows.end(), [&offset]( QRect & r )->void {
+		r.translate( -offset );
+	} );
 
-	return pm;
+	return std::make_tuple( pm, windowGeometry, windows );
 }
 
 std::tuple< QPixmap, QPoint > qsnapshot::utility::grabCurrent( bool includeDecorations ) {
@@ -165,9 +162,6 @@ std::tuple< QPixmap, QPoint > qsnapshot::utility::grabCurrent( bool includeDecor
 	x = r.left;
 	y = r.top;
 
-	QString title;
-	QString windowClass;
-
-	QPixmap pm( ::grabWindow( hParent, &title, &windowClass) );
+	QPixmap pm( ::grabWindow( hParent ) );
 	return std::make_tuple( pm, QPoint( x, y ) );
 }

@@ -27,7 +27,7 @@
 namespace qsnapshot {
 	namespace utility {
 
-		QPixmap grabWindow( std::vector< QRect > & windows );
+		std::tuple< QPixmap, QRect, std::vector< QRect > > grabWindow();
 		std::tuple< QPixmap, QPoint > grabCurrent( bool includeDecorations );
 
 	}
