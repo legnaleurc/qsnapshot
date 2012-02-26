@@ -119,7 +119,7 @@ void WindowGrabber::mousePressEvent( QMouseEvent * event ) {
 	if( event->button() == Qt::RightButton ) {
 		this->p_->yPos = event->globalY();
 	} else {
-		if ( this->p_->current ) {
+		if ( this->p_->current >= 0 ) {
 			this->p_->windowPosition = event->globalPos() - event->pos() + this->p_->windows[this->p_->current].topLeft();
 			emit this->windowGrabbed( this->palette().brush( this->backgroundRole() ).texture().copy( this->p_->windows[ this->p_->current ] ) );
 		} else {
