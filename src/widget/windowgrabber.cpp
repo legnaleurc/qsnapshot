@@ -91,10 +91,6 @@ void WindowGrabber::grab() {
 	this->p_->windows = std::get< 2 >( result );
 	this->show();
 	this->setGeometry( std::get< 1 >( result ) );
-	// NOTE hack for macosx
-//	for( std::vector< QRect >::iterator it = this->p_->windows.begin(); it != this->p_->windows.end(); ++it ) {
-//		it->translate( -this->pos() );
-//	}
 	QPalette p = this->palette();
 	p.setBrush( this->backgroundRole(), QBrush( std::get< 0 >( result ) ) );
 	this->setPalette( p );

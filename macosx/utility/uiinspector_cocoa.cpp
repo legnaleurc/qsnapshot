@@ -19,10 +19,16 @@
 #include "utility/uiinspector.hpp"
 #include "inspector.hpp"
 
-QPixmap qsnapshot::utility::grabWindow( std::vector< QRect > & windows ) {
+std::tuple< QPixmap, QRect, std::vector< QRect > > qsnapshot::utility::grabWindow() {
 	Inspector inspector;
+	std::vector< QRect > windows;
 	QPixmap pm( inspector.grabWindow( windows ) );
-	return pm;
+	QPoint offset( windows.back().topLeft() );
+	QRect windowGeometry( offset, pm.size() );
+	std::for_each( windows.begin(), windows.end(), [&offset]( QRect & r )->void {
+		r.translate( -offset );
+	} );
+	return std::make_tuple( pm, windowGeometry, windows );
 }
 
 std::tuple< QPixmap, QPoint > qsnapshot::utility::grabCurrent( bool includeDecorations ) {
