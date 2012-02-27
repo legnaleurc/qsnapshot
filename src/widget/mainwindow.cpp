@@ -51,7 +51,6 @@ modified( false ) {
 
 	this->ui.snapshotDelay->setSuffix( QObject::tr( " second(s)", "" ) );
 
-//	this->grabber->move( -10000, -10000 );
 	this->grabber->move( 0, 0 );
 	this->grabber->setWindowOpacity( 0.1 );
 	this->grabber->resize( QApplication::desktop()->screenGeometry().size() );
@@ -113,15 +112,9 @@ void MainWindow::Private::grabRegion() {
 }
 
 void MainWindow::Private::performGrab() {
-	int x = 0;
-	int y = 0;
-
 	this->grabber->releaseMouse();
 	this->grabber->hide();
 	this->grabTimer->stop();
-
-//	title.clear();
-//	windowClass.clear();
 
 	// TODO command pattern
 	if( this->mode() == ChildWindow ) {
@@ -164,7 +157,6 @@ void MainWindow::Private::performGrab() {
 	this->updatePreview();
 	QApplication::restoreOverrideCursor();
 	this->modified = true;
-//	updateCaption();
 	if( this->savedPosition != QPoint( -1, -1 ) ) {
 		this->host->move( this->savedPosition );
 	}
@@ -199,13 +191,7 @@ void MainWindow::Private::onRegionGrabbed( const QPixmap & p ) {
 		this->snapshot = p;
 		this->updatePreview();
 		modified = true;
-//		updateCaption();
 	}
-
-	// FIXME polymorphithm
-//	if( this->mode() == KSnapshotObject::Region ) {
-//		this->regionGrabber->deleteLater();
-//	}
 
 	QApplication::restoreOverrideCursor();
 	this->host->show();
@@ -216,7 +202,6 @@ void MainWindow::Private::onWindowGrabbed( const QPixmap & p ) {
 		this->snapshot = p;
 		this->updatePreview();
 		this->modified = true;
-//		updateCaption();
 	}
 
 	QApplication::restoreOverrideCursor();
