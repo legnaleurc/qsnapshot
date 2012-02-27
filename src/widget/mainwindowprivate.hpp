@@ -47,10 +47,9 @@ namespace qsnapshot {
 		public slots:
 			void onSaveAs();
 			void grab();
-			void startUndelayedGrab();
 			void onRegionGrabbed( const QPixmap & p );
 			void onWindowGrabbed( const QPixmap & p );
-			void onGrabTimerTimeout();
+			void startGrab();
 
 		public:
 			MainWindow * host;

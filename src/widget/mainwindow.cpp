@@ -80,7 +80,7 @@ modified( false ) {
 
 	this->connect( this->ui.newSnapshot, SIGNAL( clicked() ), SLOT( grab() ) );
 	this->connect( this->ui.saveAs, SIGNAL( clicked() ), SLOT( onSaveAs() ) );
-	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( onGrabTimerTimeout() ) );
+	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( startGrab() ) );
 	this->connect( this->regionGrabber, SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
 }
@@ -103,7 +103,7 @@ void MainWindow::Private::grab() {
 	if( this->delay() > 0 ) {
 		this->grabTimer->start( this->delay() );
 	} else {
-		QTimer::singleShot( 0, this, SLOT( startUndelayedGrab() ) );
+		this->startGrab();
 	}
 }
 
@@ -194,17 +194,6 @@ bool MainWindow::Private::includeDecorations() const {
 	return this->ui.includeDecorations->isChecked();
 }
 
-void MainWindow::Private::startUndelayedGrab() {
-	if( this->mode() == Region_ ) {
-		this->grabRegion();
-	} else if( this->mode() == CurrentScreen ) {
-		this->performGrab();
-	} else {
-		this->grabber->show();
-		this->grabber->grabMouse( Qt::CrossCursor );
-	}
-}
-
 void MainWindow::Private::onRegionGrabbed( const QPixmap & p ) {
 	if( !p.isNull() ) {
 		this->snapshot = p;
@@ -234,11 +223,14 @@ void MainWindow::Private::onWindowGrabbed( const QPixmap & p ) {
 	this->host->show();
 }
 
-void MainWindow::Private::onGrabTimerTimeout() {
+void MainWindow::Private::startGrab() {
 	if( this->mode() == Region_ ) {
 		this->grabRegion();
-	} else {
+	} else if( this->mode() == CurrentScreen ) {
 		this->performGrab();
+	} else {
+		this->grabber->show();
+		this->grabber->grabMouse( Qt::CrossCursor );
 	}
 	// TODO system notify
 //	KNotification::beep(i18n("The screen has been successfully grabbed."));
