@@ -36,7 +36,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 # hack MSVC path
-if(MSVC)
+if(MSVC OR APPLE)
     set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
 else()
     set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin")
@@ -91,4 +91,6 @@ else()
 endif()
 set_target_properties(qsnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
 
-install(TARGETS qsnapshot DESTINATION "bin")
+install(TARGETS qsnapshot
+    RUNTIME DESTINATION "bin"
+    BUNDLE DESTINATION ".")
