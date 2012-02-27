@@ -76,18 +76,8 @@ namespace {
 		return ret;
 	}
 
-	QPixmap grabWindow( Window child, int x, int y, uint w, uint h, uint border, QString * title = 0, QString * windowClass = 0 ) {
+	QPixmap grabWindow( Window child, int x, int y, uint w, uint h, uint border ) {
 		QPixmap pm( QPixmap::grabWindow( QX11Info::appRootWindow(), x, y, w, h ) );
-
-//		WindowInfo winInfo( findRealWindow(child), NET::WMVisibleName, NET::WM2WindowClass );
-
-//		if ( title ) {
-//			(*title) = winInfo.visibleName();
-//		}
-
-//		if ( windowClass ) {
-//			(*windowClass) = winInfo.windowClassName();
-//		}
 
 #ifdef HAVE_X11_EXTENSIONS_SHAPE_H
 		int tmp1, tmp2;
@@ -203,7 +193,7 @@ namespace {
 
 }
 
-QPixmap qsnapshot::utility::grabWindow( std::vector< QRect > & windows ) {
+std::tuple< QPixmap, QRect, std::vector< QRect > > qsnapshot::utility::grabWindow() {
 	int x = 0, y = 0;
 	uint w = 0, h = 0;
 	uint border = 0, depth = 0;
@@ -212,13 +202,13 @@ QPixmap qsnapshot::utility::grabWindow( std::vector< QRect > & windows ) {
 	Window child = windowUnderCursor();
 	XGetGeometry( QX11Info::display(), child, &root, &x, &y, &w, &h, &border, &depth );
 	XUngrabServer( QX11Info::display() );
-	QString title;
-	QString windowClass;
+	QRect r( x, y, w, h );
 
-	QPixmap pm( ::grabWindow( child, x, y, w, h, border, &title, &windowClass ) );
+	QPixmap pm( ::grabWindow( child, x, y, w, h, border ) );
+	std::vector< QRect > windows;
 	getWindowsRecursive( windows, child );
 
-	return pm;
+	return std::make_tuple( pm, r, windows );
 }
 
 std::tuple< QPixmap, QPoint > qsnapshot::utility::grabCurrent( bool includeDecorations ) {
@@ -249,10 +239,8 @@ std::tuple< QPixmap, QPoint > qsnapshot::utility::grabCurrent( bool includeDecor
 			y = newy;
 		}
 	}
-	QString title;
-	QString windowClass;
 
-	QPixmap pm( ::grabWindow( child, x, y, w, h, border, &title, &windowClass ) );
+	QPixmap pm( ::grabWindow( child, x, y, w, h, border ) );
 	XUngrabServer( QX11Info::display() );
 	return std::make_tuple( pm, QPoint( x, y ) );
 }
