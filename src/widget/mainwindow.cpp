@@ -128,10 +128,6 @@ void MainWindow::Private::performGrab() {
 		std::tuple< QPixmap, QPoint > t( WindowGrabber::grabCurrent( this->includeDecorations() ) );
 		this->snapshot = std::get< 0 >( t );
 
-		QPoint offset = std::get< 1 >( t );
-		x = offset.x();
-		y = offset.y();
-
 		// If we're showing decorations anyway then we'll add the title and window
 		// class to the output image meta data.
 		if( this->includeDecorations() ) {
