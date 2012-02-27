@@ -16,11 +16,20 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <QtGui/QApplication>
 #include "widget/mainwindow.hpp"
+#include "qsnapshot_config.h"
+
+#include <QtCore/QTextCodec>
+#include <QtGui/QApplication>
 
 int main( int argc, char * argv[] ) {
 	QApplication a( argc, argv );
+
+	QTextCodec::setCodecForTr( QTextCodec::codecForName( "UTF-8" ) );
+	QTextCodec::setCodecForCStrings( QTextCodec::codecForName( "UTF-8" ) );
+	QApplication::setApplicationName( "QSnapshot" );
+	QApplication::setApplicationVersion( QSNAPSHOT_STRINGIZER( QSNAPSHOT_VERSION ) );
+
 	qsnapshot::widget::MainWindow w;
 	w.show();
 
