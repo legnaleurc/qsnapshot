@@ -60,7 +60,6 @@ namespace qsnapshot {
 			RegionGrabber * regionGrabber;
 			std::shared_ptr< WindowGrabber > windowGrabber;
 			QPixmap snapshot;
-			QPixmap pixmap;
 			QPoint savedPosition;
 			bool modified;
 		};

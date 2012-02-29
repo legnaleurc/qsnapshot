@@ -45,7 +45,6 @@ grabTimer( new SnapshotTimer( host ) ),
 regionGrabber( new RegionGrabber( this->host ) ),
 windowGrabber( new WindowGrabber( 0 ) ),
 snapshot(),
-pixmap(),
 savedPosition(),
 modified( false ) {
 	this->ui.setupUi( host );
