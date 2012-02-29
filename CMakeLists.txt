@@ -27,9 +27,14 @@ configure_file("qsnapshot_config.h.cmake" "qsnapshot_config.h")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-find_package(Qt4 4.7)
+find_package(Qt4 4.7 REQUIRED)
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+endif()
 
 include(${QT_USE_FILE})
+set(HAVE_X11_EXTENSIONS_SHAPE_H ${X11_Xshape_FOUND})
+set(HAVE_X11_EXTENSIONS_XFIXES_H ${X11_Xfixes_FOUND})
 
 set(CMAKE_DEBUG_POSTFIX d)
 if(CMAKE_COMPILER_IS_GNUCXX)
