@@ -16,11 +16,11 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef MAINWINDOWPRIVATE_HPP
-#define MAINWINDOWPRIVATE_HPP
+#ifndef QSNAPSHOT_WIDGET_QSNAPSHOT_PRIVATE_HPP
+#define QSNAPSHOT_WIDGET_QSNAPSHOT_PRIVATE_HPP
 
-#include "mainwindow.hpp"
-#include "ui_mainwindow.h"
+#include "qsnapshot.hpp"
+#include "ui_qsnapshot.h"
 #include "snapshottimer.hpp"
 #include "regiongrabber.hpp"
 #include "windowgrabber.hpp"
@@ -30,10 +30,10 @@
 namespace qsnapshot {
 	namespace widget {
 
-		class MainWindow::Private : public QObject {
+		class QSnapshot::Private : public QObject {
 			Q_OBJECT
 		public:
-			explicit Private( MainWindow * host );
+			explicit Private( QSnapshot * host );
 
 			void grabRegion();
 			void performGrab();
@@ -53,8 +53,8 @@ namespace qsnapshot {
 			void startGrab();
 
 		public:
-			MainWindow * host;
-			Ui::MainWindow ui;
+			QSnapshot * host;
+			Ui::QSnapshot ui;
 			std::shared_ptr< QWidget > grabber;
 			SnapshotTimer * grabTimer;
 			RegionGrabber * regionGrabber;

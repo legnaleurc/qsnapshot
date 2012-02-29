@@ -16,7 +16,7 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "widget/mainwindow.hpp"
+#include "widget/qsnapshot.hpp"
 #include "qsnapshot_config.h"
 
 #include <QtCore/QTextCodec>
@@ -30,7 +30,7 @@ int main( int argc, char * argv[] ) {
 	QApplication::setApplicationName( "QSnapshot" );
 	QApplication::setApplicationVersion( QSNAPSHOT_STRINGIZER( QSNAPSHOT_VERSION ) );
 
-	qsnapshot::widget::MainWindow w;
+	qsnapshot::widget::QSnapshot w;
 	w.show();
 
 	return a.exec();

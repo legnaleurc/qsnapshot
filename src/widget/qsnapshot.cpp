@@ -16,7 +16,7 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "mainwindowprivate.hpp"
+#include "qsnapshotprivate.hpp"
 
 #include <QtGui/QDesktopWidget>
 #include <QtCore/QTimer>
@@ -35,7 +35,7 @@ const int Region_ = 2;
 
 using namespace qsnapshot::widget;
 
-MainWindow::Private::Private( MainWindow * host ):
+QSnapshot::Private::Private( QSnapshot * host ):
 QObject( host ),
 host( host ),
 ui(),
@@ -86,7 +86,7 @@ modified( false ) {
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
 }
 
-void MainWindow::Private::onSaveAs() {
+void QSnapshot::Private::onSaveAs() {
 	if( this->snapshot.isNull() ) {
 		return;
 	}
@@ -97,12 +97,12 @@ void MainWindow::Private::onSaveAs() {
 	this->snapshot.save( filePath );
 }
 
-void MainWindow::Private::onCopy() {
+void QSnapshot::Private::onCopy() {
 	QClipboard * cb = QApplication::clipboard();
 	cb->setPixmap( this->snapshot );
 }
 
-void MainWindow::Private::grab() {
+void QSnapshot::Private::grab() {
 	this->savedPosition = this->host->pos();
 	this->host->hide();
 
@@ -114,11 +114,11 @@ void MainWindow::Private::grab() {
 }
 
 // FIXME polymorphithm
-void MainWindow::Private::grabRegion() {
+void QSnapshot::Private::grabRegion() {
 	this->regionGrabber->grab();
 }
 
-void MainWindow::Private::performGrab() {
+void QSnapshot::Private::performGrab() {
 	this->grabber->releaseMouse();
 	this->grabber->hide();
 	this->grabTimer->stop();
@@ -161,30 +161,30 @@ void MainWindow::Private::performGrab() {
 	this->host->show();
 }
 
-void MainWindow::Private::updatePreview() {
+void QSnapshot::Private::updatePreview() {
 	this->setPreview( this->snapshot );
 }
 
-void MainWindow::Private::setPreview( const QPixmap & pixmap ) {
+void QSnapshot::Private::setPreview( const QPixmap & pixmap ) {
 	this->ui.preview->setToolTip( QObject::tr( "Preview of the snapshot image (%1 x %2)" ).arg( pixmap.width() ).arg( pixmap.height() ) );
 
 	this->ui.preview->setPixmap( pixmap.scaled( this->ui.preview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation ) );
 	this->ui.preview->adjustSize();
 }
 
-int MainWindow::Private::delay() const {
+int QSnapshot::Private::delay() const {
 	return this->ui.snapshotDelay->value();
 }
 
-int MainWindow::Private::mode() const {
+int QSnapshot::Private::mode() const {
 	return this->ui.captureMode->currentIndex();
 }
 
-bool MainWindow::Private::includeDecorations() const {
+bool QSnapshot::Private::includeDecorations() const {
 	return this->ui.includeDecorations->isChecked();
 }
 
-void MainWindow::Private::onRegionGrabbed( const QPixmap & p ) {
+void QSnapshot::Private::onRegionGrabbed( const QPixmap & p ) {
 	if( !p.isNull() ) {
 		this->snapshot = p;
 		this->updatePreview();
@@ -195,7 +195,7 @@ void MainWindow::Private::onRegionGrabbed( const QPixmap & p ) {
 	this->host->show();
 }
 
-void MainWindow::Private::onWindowGrabbed( const QPixmap & p ) {
+void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
 	if ( !p.isNull() ) {
 		this->snapshot = p;
 		this->updatePreview();
@@ -206,7 +206,7 @@ void MainWindow::Private::onWindowGrabbed( const QPixmap & p ) {
 	this->host->show();
 }
 
-void MainWindow::Private::startGrab() {
+void QSnapshot::Private::startGrab() {
 	if( this->mode() == Region_ ) {
 		this->grabRegion();
 	} else if( this->mode() == CurrentScreen ) {
@@ -219,16 +219,16 @@ void MainWindow::Private::startGrab() {
 //	KNotification::beep(i18n("The screen has been successfully grabbed."));
 }
 
-MainWindow::MainWindow(QWidget *parent) :
-QMainWindow(parent),
+QSnapshot::QSnapshot() :
+QWidget(),
 p_( new Private( this ) ) {
 	// NOTE somehow eventFilter will be triggered between
 	// new Private( this ) and p_ = new Private
 	this->p_->grabber->installEventFilter( this );
 }
 
-void MainWindow::changeEvent( QEvent * e ) {
-	this->QMainWindow::changeEvent( e );
+void QSnapshot::changeEvent( QEvent * e ) {
+	this->QWidget::changeEvent( e );
 	switch( e->type() ) {
 	case QEvent::LanguageChange:
 		this->p_->ui.retranslateUi( this );
@@ -238,7 +238,7 @@ void MainWindow::changeEvent( QEvent * e ) {
 	}
 }
 
-bool MainWindow::eventFilter( QObject * object, QEvent * event ) {
+bool QSnapshot::eventFilter( QObject * object, QEvent * event ) {
 	if( object == this->p_->grabber.get() && event->type() == QEvent::MouseButtonPress ) {
 		QMouseEvent * me = dynamic_cast< QMouseEvent * >( event );
 		if( this->QWidget::mouseGrabber() != this->p_->grabber.get() ) {

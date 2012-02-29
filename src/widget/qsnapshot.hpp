@@ -16,19 +16,19 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef QSNAPSHOT_WIDGET_QSNAPSHOT_HPP
+#define QSNAPSHOT_WIDGET_QSNAPSHOT_HPP
 
-#include <QtGui/QMainWindow>
+#include <QtGui/QWidget>
 
 namespace qsnapshot {
 	namespace widget {
 
-		class MainWindow : public QMainWindow {
+		class QSnapshot : public QWidget {
 			Q_OBJECT
 
 		public:
-			explicit MainWindow( QWidget * parent = 0 );
+			QSnapshot();
 
 		protected:
 			virtual void changeEvent( QEvent * event );
