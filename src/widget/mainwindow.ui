@@ -200,7 +200,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="copy">
         <property name="text">
          <string>Copy</string>
         </property>

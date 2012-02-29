@@ -22,6 +22,7 @@
 #include <QtCore/QTimer>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QFileDialog>
+#include <QtGui/QClipboard>
 
 #include <QtCore/QtDebug>
 
@@ -79,6 +80,7 @@ modified( false ) {
 
 	this->connect( this->ui.newSnapshot, SIGNAL( clicked() ), SLOT( grab() ) );
 	this->connect( this->ui.saveAs, SIGNAL( clicked() ), SLOT( onSaveAs() ) );
+	this->connect( this->ui.copy, SIGNAL( clicked() ), SLOT( onCopy() ) );
 	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( startGrab() ) );
 	this->connect( this->regionGrabber, SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
@@ -93,6 +95,11 @@ void MainWindow::Private::onSaveAs() {
 		return;
 	}
 	this->snapshot.save( filePath );
+}
+
+void MainWindow::Private::onCopy() {
+	QClipboard * cb = QApplication::clipboard();
+	cb->setPixmap( this->snapshot );
 }
 
 void MainWindow::Private::grab() {
