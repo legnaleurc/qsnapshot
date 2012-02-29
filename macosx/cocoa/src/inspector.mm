@@ -68,11 +68,18 @@ QRect rectOfElement( AXUIElementRef element ) {
 }
 
 void getWindows( std::vector< QRect > & windows, AXUIElementRef element ) {
+	NSString * roleName = [UIElementUtilities roleOfUIElement:element];
+	bool scrollFix = [roleName isEqualToString:@"AXScrollArea"];
+	QRect parentRect( rectOfElement( element ) );
+
 	NSArray * children = subelementsFromElement( element );
 	NSEnumerator * e = [children objectEnumerator];
-	AXUIElementRef child;
+	AXUIElementRef child = nil;
 	while( child = ( AXUIElementRef )[e nextObject] ) {
 		QRect r( rectOfElement( child ) );
+		if( scrollFix ) {
+			r = r.intersected( parentRect );
+		}
 		if( r.width() < MIN_SIZE || r.height() < MIN_SIZE ) {
 			continue;
 		}
