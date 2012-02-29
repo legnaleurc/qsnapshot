@@ -16,14 +16,19 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#import "inspector.hpp"
-#import <AppKit/NSAccessibility.h>
+#ifndef QSNAPSHOT_UTILITY_INSPECTOR_H
+#define QSNAPSHOT_UTILITY_INSPECTOR_H
 
-class Inspector::Private {
-public:
-	explicit Private( Inspector * host );
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-	AXUIElementRef getCurrentUIElement() const;
+int grabWindow( char * * data );
 
-	Inspector * host;
-};
+int grabCurrent( char * * data, int includeDecorations );
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

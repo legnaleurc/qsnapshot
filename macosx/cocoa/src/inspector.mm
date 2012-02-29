@@ -16,7 +16,7 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#import "inspectorprivate.h"
+#import "inspector.h"
 #import "UIElementUtilities.h"
 
 #import <Cocoa/Cocoa.h>
@@ -24,8 +24,7 @@
 
 #import <QtGui/QApplication>
 #import <QtGui/QDesktopWidget>
-
-#import <QtCore/QtDebug>
+#import <QtCore/QDataStream>
 
 const int MIN_SIZE = 8;
 
@@ -67,7 +66,7 @@ QRect rectOfElement( AXUIElementRef element ) {
 	return QRect( bounds.origin.x, realY, bounds.size.width, bounds.size.height );
 }
 
-void getWindows( std::vector< QRect > & windows, AXUIElementRef element ) {
+void getWindows( QVector< QRect > & windows, AXUIElementRef element ) {
 	NSString * roleName = [UIElementUtilities roleOfUIElement:element];
 	bool scrollFix = [roleName isEqualToString:@"AXScrollArea"];
 	QRect parentRect( rectOfElement( element ) );
@@ -92,11 +91,7 @@ bool operator< ( const QRect& r1, const QRect& r2 ) {
 	return r1.width() * r1.height() < r2.width() * r2.height();
 }
 
-Inspector::Private::Private( Inspector * host ):
-host( host ) {
-}
-
-AXUIElementRef Inspector::Private::getCurrentUIElement() const {
+AXUIElementRef getCurrentUIElement() {
 	NSPoint cocoaPoint = [NSEvent mouseLocation];
 	CGPoint pointAsCGPoint = [UIElementUtilities carbonScreenPointFromCocoaScreenPoint:cocoaPoint];
 	AXUIElementRef systemWideElement = AXUIElementCreateSystemWide();
@@ -113,29 +108,50 @@ AXUIElementRef Inspector::Private::getCurrentUIElement() const {
 	return currentUIElement;
 }
 
-Inspector::Inspector():
-p_( new Private( this ) ) {
-}
-
-QPixmap Inspector::grabWindow( std::vector< QRect > & windows ) {
-	AXUIElementRef currentUIElement = this->p_->getCurrentUIElement();
+/**
+ * @brief C wrapper for finding sub-window
+ * @return A serialized binary data by QDataStream, format is QPixmap,
+ * QVector< QRect > . The allocated memory must free by hand.
+ */
+int grabWindow( char * * data ) {
+	AXUIElementRef currentUIElement = getCurrentUIElement();
 	QRect r( rectOfElement( currentUIElement ) );
 	if ( r.isEmpty() ) {
-		return QPixmap();
+		return NULL;
 	}
 
+	QVector< QRect > windows;
 	windows.push_back( r );
-	getWindows( windows, this->p_->getCurrentUIElement() );
+	getWindows( windows, currentUIElement );
 	std::sort( windows.begin(), windows.end() );
-	return QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() );
+	QPixmap pm( QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() ) );
+
+	QByteArray buffer;
+	QDataStream sout( &buffer, QIODevice::WriteOnly );
+	sout << pm << windows;
+	*data = static_cast< char * >( std::malloc( buffer.size() ) );
+	std::memcpy( *data, buffer.constData(), buffer.size() );
+	return buffer.size();
 }
 
-QPair< QPixmap, QPoint > Inspector::grabCurrent( bool /*includeDecorations*/ ) {
-	AXUIElementRef currentUIElement = this->p_->getCurrentUIElement();
+/**
+ * @brief C wrapper for find current window
+ * @param includeDecorations include window decorations
+ * @return A serialized binary data by QDataStream, format is QPixmap,
+ * QPoint . The allocated memory must free by hand.
+ */
+int grabCurrent( char * * data, int /*includeDecorations*/ ) {
+	AXUIElementRef currentUIElement = getCurrentUIElement();
 	QRect r( rectOfElement( currentUIElement ) );
 	if( r.isEmpty() ) {
-		return QPair< QPixmap, QPoint >();
+		return -1;
 	}
 	QPixmap pm( QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() ) );
-	return qMakePair( pm, r.topLeft() );
+
+	QByteArray buffer;
+	QDataStream sout( &buffer, QIODevice::WriteOnly );
+	sout << pm << r.topLeft();
+	*data = static_cast< char * >( std::malloc( buffer.size() ) );
+	std::memcpy( *data, buffer.constData(), buffer.size() );
+	return buffer.size();
 }

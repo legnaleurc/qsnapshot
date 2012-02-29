@@ -17,22 +17,36 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "utility/uiinspector.hpp"
-#include "inspector.hpp"
+#include "inspector.h"
+
+#include <QtCore/QDataStream>
 
 std::tuple< QPixmap, QRect, std::vector< QRect > > qsnapshot::utility::grabWindow() {
-	Inspector inspector;
-	std::vector< QRect > windows;
-	QPixmap pm( inspector.grabWindow( windows ) );
+	char * data = NULL;
+	int nData = ::grabWindow( &data );
+	QByteArray buffer( data, nData );
+	std::free( data );
+	QDataStream sin( buffer );
+	QPixmap pm;
+	QVector< QRect > windows;
+	sin >> pm >> windows;
+
 	QPoint offset( windows.back().topLeft() );
 	QRect windowGeometry( offset, pm.size() );
 	std::for_each( windows.begin(), windows.end(), [&offset]( QRect & r )->void {
 		r.translate( -offset );
 	} );
-	return std::make_tuple( pm, windowGeometry, windows );
+	return std::make_tuple( pm, windowGeometry, windows.toStdVector() );
 }
 
 std::tuple< QPixmap, QPoint > qsnapshot::utility::grabCurrent( bool includeDecorations ) {
-	Inspector inspector;
-	QPair< QPixmap, QPoint > ppp( inspector.grabCurrent( includeDecorations ) );
-	return std::make_tuple( ppp.first, ppp.second );
+	char * data = NULL;
+	int nData = ::grabCurrent( &data, includeDecorations );
+	QByteArray buffer( data, nData );
+	std::free( data );
+	QDataStream sin( buffer );
+	QPixmap pm;
+	QPoint offset;
+	sin >> pm >> offset;
+	return std::make_tuple( pm, offset );
 }
