@@ -126,11 +126,6 @@ void MainWindow::Private::performGrab() {
 	// TODO command pattern
 	if( this->mode() == ChildWindow ) {
 		this->windowGrabber->grab();
-		// TODO event scope
-//		QPoint offset = WindowGrabber::lastWindowPosition();
-//		x = offset.x();
-//		y = offset.y();
-//		qDebug() << "last window position is" << offset;
 	} else if ( this->mode() == WindowUnderCursor ) {
 		std::tuple< QPixmap, QPoint > t( WindowGrabber::grabCurrent( this->includeDecorations() ) );
 		this->snapshot = std::get< 0 >( t );
