@@ -76,6 +76,7 @@ endforeach()
 
 qt4_wrap_cpp(QSNAPSHOT_MOC_SOURCES ${QSNAPSHOT_MOC_HEADERS})
 qt4_wrap_ui(QSNAPSHOT_UIC_HEADERS ${QSNAPSHOT_FORMS})
+qt4_add_resources(QSNAPSHOT_RCC_SOURCES "qsnapshot.qrc")
 
 source_group("Generated Files" FILES ${QSNAPSHOT_MOC_SOURCES} ${QSNAPSHOT_RCC_SOURCES} ${QSNAPSHOT_UIC_HEADERS})
 source_group("Resource Files" REGULAR_EXPRESSION .*\\.rc)

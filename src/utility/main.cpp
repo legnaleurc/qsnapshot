@@ -21,6 +21,7 @@
 
 #include <QtCore/QTextCodec>
 #include <QtGui/QApplication>
+#include <QtGui/QIcon>
 
 int main( int argc, char * argv[] ) {
 	QApplication a( argc, argv );
@@ -29,6 +30,7 @@ int main( int argc, char * argv[] ) {
 	QTextCodec::setCodecForCStrings( QTextCodec::codecForName( "UTF-8" ) );
 	QApplication::setApplicationName( "QSnapshot" );
 	QApplication::setApplicationVersion( QSNAPSHOT_STRINGIZER( QSNAPSHOT_VERSION ) );
+	QApplication::setWindowIcon( QIcon( ":/share/pixmap/logo.png" ) );
 
 	qsnapshot::widget::QSnapshot w;
 	w.show();
