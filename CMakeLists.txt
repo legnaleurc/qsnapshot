@@ -86,7 +86,7 @@ set(QSNAPSHOT_COMPILE_UNITS ${QSNAPSHOT_HEADERS} ${QSNAPSHOT_SOURCES} ${QSNAPSHO
 set(QSNAPSHOT_LINKING_UNITS ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 
 if(MSVC)
-    add_executable(qsnapshot WIN32 ${QSNAPSHOT_COMPILE_UNITS})
+    add_executable(qsnapshot WIN32 "qsnapshot.rc" ${QSNAPSHOT_COMPILE_UNITS})
     target_link_libraries(qsnapshot ${QSNAPSHOT_LINKING_UNITS} ${QT_QTMAIN_LIBRARY})
 elseif(APPLE)
     add_executable(qsnapshot MACOSX_BUNDLE ${QSNAPSHOT_COMPILE_UNITS})
