@@ -106,3 +106,9 @@ set_target_properties(qsnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
 install(TARGETS qsnapshot
     RUNTIME DESTINATION "bin"
     BUNDLE DESTINATION ".")
+
+if(APPLE)
+    set(CPACK_GENERATOR DragNDrop)
+endif()
+
+include(CPack)
