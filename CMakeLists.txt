@@ -35,6 +35,7 @@ endif()
 include(${QT_USE_FILE})
 set(HAVE_X11_EXTENSIONS_SHAPE_H ${X11_Xshape_FOUND})
 set(HAVE_X11_EXTENSIONS_XFIXES_H ${X11_Xfixes_FOUND})
+include(InstallRequiredSystemLibraries)
 
 set(CMAKE_DEBUG_POSTFIX d)
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -103,12 +104,23 @@ else()
 endif()
 set_target_properties(qsnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
 
+# install part
 install(TARGETS qsnapshot
-    RUNTIME DESTINATION "bin"
-    BUNDLE DESTINATION ".")
+    RUNTIME DESTINATION "bin" COMPONENT Runtime
+    BUNDLE DESTINATION "." COMPONENT Runtime)
 
 if(APPLE)
     set(CPACK_GENERATOR DragNDrop)
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/qsnapshot.app")
+    set(DIRS "${QT_LIBRARY_DIRS}")
+    install(CODE "
+        file(WRITE \"\${CMAKE_INSTALL_PREFIX}/qsnapshot.app/Contents/Resources/qt.conf\" \"\")
+        " COMPONENT Runtime)
 endif()
+install(CODE "
+    include(BundleUtilities)
+    set(BU_CHMOD_BUNDLE_ITEMS TRUE)
+    fixup_bundle(\"${APPS}\" \"\" \"${DIRS}\")
+    " COMPONENT Runtime)
 
 include(CPack)
