@@ -114,6 +114,7 @@ set_target_properties(qsnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
 install(TARGETS qsnapshot
     RUNTIME DESTINATION "bin" COMPONENT Runtime
     BUNDLE DESTINATION "." COMPONENT Runtime)
+install(SCRIPT "install.cmake" COMPONENT Runtime)
 
 # package part
 set(CPACK_PACKAGE_VERSION_MAJOR ${QSNAPSHOT_VERSION_MAJOR})
@@ -121,16 +122,6 @@ set(CPACK_PACKAGE_VERSION_MINOR ${QSNAPSHOT_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${QSNAPSHOT_VERSION_PATCH})
 if(APPLE)
     set(CPACK_GENERATOR DragNDrop)
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/qsnapshot.app")
-    set(DIRS "${QT_LIBRARY_DIRS}")
-    install(CODE "
-        file(WRITE \"\${CMAKE_INSTALL_PREFIX}/qsnapshot.app/Contents/Resources/qt.conf\" \"\")
-        " COMPONENT Runtime)
 endif()
-install(CODE "
-    include(BundleUtilities)
-    set(BU_CHMOD_BUNDLE_ITEMS TRUE)
-    fixup_bundle(\"${APPS}\" \"\" \"${DIRS}\")
-    " COMPONENT Runtime)
 
 include(CPack)
