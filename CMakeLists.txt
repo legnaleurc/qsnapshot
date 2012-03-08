@@ -61,7 +61,6 @@ if(APPLE)
         "share/pixmap/logo.icns"
         PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
-    set(MACOSX_BUNDLE_ICON_FILE "logo.icns")
 elseif(UNIX)
     file(GLOB_RECURSE QSNAPSHOT_PLATFORM_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} x11/*.cpp)
 elseif(WIN32)
@@ -98,6 +97,13 @@ elseif(APPLE)
     add_executable(qsnapshot MACOSX_BUNDLE "share/pixmap/logo.icns" ${QSNAPSHOT_COMPILE_UNITS})
     add_dependencies(qsnapshot cocoa)
     target_link_libraries(qsnapshot cocoa ${QSNAPSHOT_LINKING_UNITS} ${COCOA_LIBRARY})
+    set_target_properties(qsnapshot PROPERTIES
+        MACOSX_BUNDLE_ICON_FILE "logo.icns"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "QSnapshot"
+        MACOSX_BUNDLE_LONG_VERSION_STRING "version ${QSNAPSHOT_VERSION}"
+        MACOSX_BUNDLE_BUNDLE_NAME "QSnapshot"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "v${QSNAPSHOT_VERSION}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${QSNAPSHOT_VERSION}")
 else()
     add_executable(qsnapshot ${QSNAPSHOT_COMPILE_UNITS})
     target_link_libraries(qsnapshot ${QSNAPSHOT_LINKING_UNITS})
@@ -109,6 +115,10 @@ install(TARGETS qsnapshot
     RUNTIME DESTINATION "bin" COMPONENT Runtime
     BUNDLE DESTINATION "." COMPONENT Runtime)
 
+# package part
+set(CPACK_PACKAGE_VERSION_MAJOR ${QSNAPSHOT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${QSNAPSHOT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${QSNAPSHOT_VERSION_PATCH})
 if(APPLE)
     set(CPACK_GENERATOR DragNDrop)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/qsnapshot.app")
