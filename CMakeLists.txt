@@ -122,6 +122,16 @@ set(CPACK_PACKAGE_VERSION_MINOR ${QSNAPSHOT_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${QSNAPSHOT_VERSION_PATCH})
 if(APPLE)
     set(CPACK_GENERATOR DragNDrop)
+elseif(WIN32)
+    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+  CreateShortCut \\\"\\\$SMPROGRAMS\\\\\\\$STARTMENU_FOLDER\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\qsnapshot.exe\\\"
+  CreateShortCut \\\"\\\$DESKTOP\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\qsnapshot.exe\\\"
+    ")
+    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+  Delete \\\"\\\$DESKTOP\\\\QSnapshot.lnk\\\"
+  !insertmacro MUI_STARTMENU_GETFOLDER Application \\\$MUI_TEMP
+  Delete \\\"\\\$SMPROGRAMS\\\\\\\$MUI_TEMP\\\\QSnapshot.lnk\\\"
+    ")
 endif()
 
 include(CPack)
