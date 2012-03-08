@@ -143,6 +143,14 @@ void QSnapshot::Private::performGrab() {
 //		y = geom.y();
 //		this->snapshot = QPixmap::grabWindow( desktop->winId(), x, y, geom.width(), geom.height() );
 	} else {
+		// NOTE this is a dirty hack, wait a little time for main dialog really hidden
+		QTimer hack;
+		hack.setSingleShot( true );
+		hack.setInterval( 20 );
+		QEventLoop wait;
+		wait.connect( &hack, SIGNAL( timeout() ), SLOT( quit() ) );
+		hack.start();
+		wait.exec();
 		this->snapshot = QPixmap::grabWindow( QApplication::desktop()->winId() );
 	}
 #ifdef HAVE_X11_EXTENSIONS_XFIXES_H
