@@ -91,13 +91,13 @@ set(QSNAPSHOT_COMPILE_UNITS ${QSNAPSHOT_HEADERS} ${QSNAPSHOT_SOURCES} ${QSNAPSHO
 set(QSNAPSHOT_LINKING_UNITS ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 
 if(MSVC)
-    add_executable(qsnapshot WIN32 "qsnapshot.rc" ${QSNAPSHOT_COMPILE_UNITS})
-    target_link_libraries(qsnapshot ${QSNAPSHOT_LINKING_UNITS} ${QT_QTMAIN_LIBRARY})
+    add_executable(QSnapshot WIN32 "qsnapshot.rc" ${QSNAPSHOT_COMPILE_UNITS})
+    target_link_libraries(QSnapshot ${QSNAPSHOT_LINKING_UNITS} ${QT_QTMAIN_LIBRARY})
 elseif(APPLE)
-    add_executable(qsnapshot MACOSX_BUNDLE "share/pixmap/logo.icns" ${QSNAPSHOT_COMPILE_UNITS})
-    add_dependencies(qsnapshot cocoa)
-    target_link_libraries(qsnapshot cocoa ${QSNAPSHOT_LINKING_UNITS} ${COCOA_LIBRARY})
-    set_target_properties(qsnapshot PROPERTIES
+    add_executable(QSnapshot MACOSX_BUNDLE "share/pixmap/logo.icns" ${QSNAPSHOT_COMPILE_UNITS})
+    add_dependencies(QSnapshot cocoa)
+    target_link_libraries(QSnapshot cocoa ${QSNAPSHOT_LINKING_UNITS} ${COCOA_LIBRARY})
+    set_target_properties(QSnapshot PROPERTIES
         MACOSX_BUNDLE_ICON_FILE "logo.icns"
         MACOSX_BUNDLE_GUI_IDENTIFIER "QSnapshot"
         MACOSX_BUNDLE_LONG_VERSION_STRING "version ${QSNAPSHOT_VERSION}"
@@ -105,13 +105,13 @@ elseif(APPLE)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "v${QSNAPSHOT_VERSION}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${QSNAPSHOT_VERSION}")
 else()
-    add_executable(qsnapshot ${QSNAPSHOT_COMPILE_UNITS})
-    target_link_libraries(qsnapshot ${QSNAPSHOT_LINKING_UNITS})
+    add_executable(QSnapshot ${QSNAPSHOT_COMPILE_UNITS})
+    target_link_libraries(QSnapshot ${QSNAPSHOT_LINKING_UNITS})
 endif()
-set_target_properties(qsnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
+set_target_properties(QSnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
 
 # install part
-install(TARGETS qsnapshot
+install(TARGETS QSnapshot
     RUNTIME DESTINATION "bin" COMPONENT Runtime
     BUNDLE DESTINATION "." COMPONENT Runtime)
 install(SCRIPT "install.cmake" COMPONENT Runtime)
@@ -126,8 +126,8 @@ if(APPLE)
 elseif(WIN32)
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "QSnapshot")
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-  CreateShortCut \\\"\\\$SMPROGRAMS\\\\\\\$STARTMENU_FOLDER\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\qsnapshot.exe\\\"
-  CreateShortCut \\\"\\\$DESKTOP\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\qsnapshot.exe\\\"
+  CreateShortCut \\\"\\\$SMPROGRAMS\\\\\\\$STARTMENU_FOLDER\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\QSnapshot.exe\\\"
+  CreateShortCut \\\"\\\$DESKTOP\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\QSnapshot.exe\\\"
     ")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
   Delete \\\"\\\$DESKTOP\\\\QSnapshot.lnk\\\"
