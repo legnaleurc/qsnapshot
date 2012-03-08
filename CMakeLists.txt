@@ -23,7 +23,7 @@ set(QSNAPSHOT_VERSION_MINOR "1")
 set(QSNAPSHOT_VERSION_PATCH "0")
 set(QSNAPSHOT_VERSION "${QSNAPSHOT_VERSION_MAJOR}.${QSNAPSHOT_VERSION_MINOR}.${QSNAPSHOT_VERSION_PATCH}")
 
-configure_file("qsnapshot_config.h.cmake" "qsnapshot_config.h")
+configure_file("qsnapshot_config.h.in" "qsnapshot_config.h")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
