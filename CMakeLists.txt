@@ -124,6 +124,7 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
 if(APPLE)
     set(CPACK_GENERATOR DragNDrop)
 elseif(WIN32)
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "QSnapshot")
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
   CreateShortCut \\\"\\\$SMPROGRAMS\\\\\\\$STARTMENU_FOLDER\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\qsnapshot.exe\\\"
   CreateShortCut \\\"\\\$DESKTOP\\\\QSnapshot.lnk\\\" \\\"\\\$INSTDIR\\\\bin\\\\qsnapshot.exe\\\"
