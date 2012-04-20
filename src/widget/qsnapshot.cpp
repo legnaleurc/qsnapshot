@@ -19,6 +19,7 @@
 #include "qsnapshotprivate.hpp"
 
 #include <QtGui/QDesktopWidget>
+#include <QtGui/QDesktopServices>
 #include <QtCore/QTimer>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QFileDialog>
@@ -89,7 +90,7 @@ void QSnapshot::Private::onSaveAs() {
 	if( this->snapshot.isNull() ) {
 		return;
 	}
-	QString filePath = QFileDialog::getSaveFileName( this->host, QObject::tr( "Save Captured Picture" ), QDir::currentPath(), "*.png (PNG files)" );
+	QString filePath = QFileDialog::getSaveFileName( this->host, QObject::tr( "Save Captured Picture" ), QDesktopServices::storageLocation( QDesktopServices::PicturesLocation ), "*.png (PNG files)" );
 	if( filePath.isEmpty() ) {
 		return;
 	}
