@@ -28,10 +28,18 @@
 #include <QtCore/QtDebug>
 
 namespace {
-const int ChildWindow = 3;
-const int WindowUnderCursor = 1;
-const int CurrentScreen = 0;
-const int Region_ = 2;
+
+	const int ChildWindow = 3;
+	const int WindowUnderCursor = 1;
+	const int CurrentScreen = 0;
+	const int Region_ = 2;
+
+	void delayGUI( int msec ) {
+		QEventLoop wait;
+		QTimer::singleShot( msec, &wait, SLOT( quit() ) );
+		wait.exec();
+	}
+
 }
 
 using namespace qsnapshot::widget;
@@ -121,6 +129,8 @@ void QSnapshot::Private::grabRegion() {
 void QSnapshot::Private::performGrab() {
 	this->grabber->releaseMouse();
 	this->grabber->hide();
+	// NOTE this is a dirty hack, wait a little time for grabber layer really hidden
+	delayGUI( 20 );
 	this->grabTimer->stop();
 
 	// TODO command pattern
@@ -144,14 +154,6 @@ void QSnapshot::Private::performGrab() {
 //		y = geom.y();
 //		this->snapshot = QPixmap::grabWindow( desktop->winId(), x, y, geom.width(), geom.height() );
 	} else {
-		// NOTE this is a dirty hack, wait a little time for main dialog really hidden
-		QTimer hack;
-		hack.setSingleShot( true );
-		hack.setInterval( 20 );
-		QEventLoop wait;
-		wait.connect( &hack, SIGNAL( timeout() ), SLOT( quit() ) );
-		hack.start();
-		wait.exec();
 		this->snapshot = QPixmap::grabWindow( QApplication::desktop()->winId() );
 	}
 #ifdef HAVE_X11_EXTENSIONS_XFIXES_H
@@ -215,6 +217,9 @@ void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
 }
 
 void QSnapshot::Private::startGrab() {
+	// NOTE this is a dirty hack, wait a little time for main dialog really hidden
+	delayGUI( 20 );
+
 	if( this->mode() == Region_ ) {
 		this->grabRegion();
 	} else if( this->mode() == CurrentScreen ) {
