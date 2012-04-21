@@ -19,7 +19,6 @@
 #include "qsnapshotprivate.hpp"
 
 #include <QtGui/QDesktopWidget>
-#include <QtGui/QDesktopServices>
 #include <QtCore/QTimer>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QFileDialog>
@@ -52,6 +51,7 @@ ui(),
 grabber( new QWidget( 0, Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ) ),
 grabTimer( new SnapshotTimer( host ) ),
 regionGrabber( new RegionGrabber( this->host ) ),
+savingDialog( new SavingDialog( this->host ) ),
 windowGrabber( new WindowGrabber( 0 ) ),
 snapshot(),
 savedPosition(),
@@ -98,11 +98,18 @@ void QSnapshot::Private::onSaveAs() {
 	if( this->snapshot.isNull() ) {
 		return;
 	}
-	QString filePath = QFileDialog::getSaveFileName( this->host, QObject::tr( "Save Captured Picture" ), QDesktopServices::storageLocation( QDesktopServices::PicturesLocation ), "*.png (PNG files)" );
-	if( filePath.isEmpty() ) {
+	if( QDialog::Accepted != this->savingDialog->exec() ) {
 		return;
 	}
-	this->snapshot.save( filePath );
+	QStringList filePaths( this->savingDialog->selectedFiles() );
+	if( filePaths.empty() ) {
+		return;
+	}
+	QFileInfo fileInfo( filePaths.at( 0 ) );
+	if( fileInfo.exists() && !fileInfo.isFile() ) {
+		return;
+	}
+	this->snapshot.save( fileInfo.absoluteFilePath() );
 }
 
 void QSnapshot::Private::onCopy() {

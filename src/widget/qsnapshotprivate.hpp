@@ -21,6 +21,7 @@
 
 #include "qsnapshot.hpp"
 #include "ui_qsnapshot.h"
+#include "savingdialog.hpp"
 #include "snapshottimer.hpp"
 #include "regiongrabber.hpp"
 #include "windowgrabber.hpp"
@@ -58,6 +59,7 @@ namespace qsnapshot {
 			std::shared_ptr< QWidget > grabber;
 			SnapshotTimer * grabTimer;
 			RegionGrabber * regionGrabber;
+			SavingDialog * savingDialog;
 			std::shared_ptr< WindowGrabber > windowGrabber;
 			QPixmap snapshot;
 			QPoint savedPosition;
