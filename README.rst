@@ -16,7 +16,7 @@ Build dependency
 
 You need following tools:
 
-* `CMake`_
+* `CMake`_ >= 2.6
 * `Qt`_
 * C++0x supported toolchain
     * Microsoft Windows
