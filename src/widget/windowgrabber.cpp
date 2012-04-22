@@ -37,7 +37,7 @@ windowPosition() {
 // Searches and returns the index of the first (=smallest) window
 // containing the mouse pointer.
 int WindowGrabber::Private::windowIndex( const QPoint & pos ) const {
-	for( int i = 0; i < this->windows.size(); ++i ) {
+	for( std::size_t i = 0; i < this->windows.size(); ++i ) {
 		if( this->windows.at( i ).contains( pos ) ) {
 			return i;
 		}
@@ -49,7 +49,7 @@ int WindowGrabber::Private::windowIndex( const QPoint & pos ) const {
 // This method is activated by either rotating the mouse wheel forwards or by
 // dragging the mouse forwards while keeping the right mouse button pressed.
 void WindowGrabber::Private::increaseScope( const QPoint & pos ) {
-	for ( int i = this->current + 1; i < this->windows.size(); ++i ) {
+	for ( std::size_t i = this->current + 1; i < this->windows.size(); ++i ) {
 		if ( this->windows[ i ].contains( pos ) ) {
 			current = i;
 			break;
