@@ -117,7 +117,7 @@ int grabWindow( char * * data ) {
 	AXUIElementRef currentUIElement = getCurrentUIElement();
 	QRect r( rectOfElement( currentUIElement ) );
 	if ( r.isEmpty() ) {
-		return NULL;
+		return -1;
 	}
 
 	QVector< QRect > windows;
