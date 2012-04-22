@@ -24,6 +24,11 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QClipboard>
 
+#ifdef _MSC_VER
+# include <QtCore/QLibrary>
+# include <dwmapi.h>
+#endif
+
 #include <QtCore/QtDebug>
 
 namespace {
@@ -119,6 +124,7 @@ void QSnapshot::Private::onCopy() {
 
 void QSnapshot::Private::grab() {
 	this->savedPosition = this->host->pos();
+	this->setFastHide( true );
 	this->host->hide();
 
 	if( this->delay() > 0 ) {
@@ -176,6 +182,7 @@ void QSnapshot::Private::performGrab() {
 		this->host->move( this->savedPosition );
 	}
 	this->host->show();
+	this->setFastHide( false );
 }
 
 void QSnapshot::Private::updatePreview() {
@@ -187,6 +194,23 @@ void QSnapshot::Private::setPreview( const QPixmap & pixmap ) {
 
 	this->ui.preview->setPixmap( pixmap.scaled( this->ui.preview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation ) );
 	this->ui.preview->adjustSize();
+}
+
+void QSnapshot::Private::setFastHide( bool fastHide ) {
+#ifdef _MSC_VER
+	typedef HRESULT (WINAPI * Function)( HWND, DWORD, LPCVOID, DWORD );
+	Function f = reinterpret_cast< Function >( QLibrary::resolve( "dwmapi", "DwmSetWindowAttribute" ) );
+	if( f == NULL ) {
+		return;
+	}
+	LPCVOID dwAttribute = reinterpret_cast< LPCVOID >( fastHide );
+	HRESULT hr = f( this->host->winId(), DWMWA_TRANSITIONS_FORCEDISABLED, &dwAttribute, sizeof( dwAttribute ) );
+	// TODO throw warning if failed
+	SUCCEEDED( hr );
+#else
+	Q_UNUSED( fastHide );
+	return;
+#endif
 }
 
 int QSnapshot::Private::delay() const {
@@ -210,6 +234,7 @@ void QSnapshot::Private::onRegionGrabbed( const QPixmap & p ) {
 
 	QApplication::restoreOverrideCursor();
 	this->host->show();
+	this->setFastHide( false );
 }
 
 void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
@@ -221,6 +246,7 @@ void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
 
 	QApplication::restoreOverrideCursor();
 	this->host->show();
+	this->setFastHide( false );
 }
 
 void QSnapshot::Private::startGrab() {

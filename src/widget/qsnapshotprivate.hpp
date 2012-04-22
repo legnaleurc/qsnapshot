@@ -40,6 +40,7 @@ namespace qsnapshot {
 			void performGrab();
 			void updatePreview();
 			void setPreview( const QPixmap & pixmap );
+			void setFastHide( bool fastHide );
 
 			int delay() const;
 			int mode() const;
