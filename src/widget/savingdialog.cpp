@@ -28,9 +28,12 @@ p_( new Private ) {
 
 void SavingDialog::setVisible( bool visible ) {
 	if( visible ) {
+		this->setDirectory( this->p_->savePath );
 		// pick a good default name
 		QString name( this->p_->guessDefaultName() );
 		this->selectFile( name );
+	} else {
+		this->p_->savePath = this->directory().absolutePath();
 	}
 	this->QFileDialog::setVisible( visible );
 }
