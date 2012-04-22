@@ -36,7 +36,21 @@ How to build
     mkdir build
     cd build
     cmake ..
+    make
+
+How to install
+--------------
+
+::
+
     make install
+
+How to build package
+--------------------
+
+::
+
+    make package
 
 .. [#] Since `XCode`_ does not provide this version, you could use `MacPorts`_
     or `Homebrew`_ to install one.
