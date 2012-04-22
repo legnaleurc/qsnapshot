@@ -18,7 +18,7 @@ You need following tools:
 
 * `CMake`_ >= 2.6
 * `Qt`_
-* C++0x supported toolchain
+* toolchain with C++0x support
     * Microsoft Windows
         `Microsoft Visual C++`_ >= 2010
     * Mac OS X
