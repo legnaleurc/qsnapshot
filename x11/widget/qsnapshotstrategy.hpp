@@ -17,6 +17,7 @@ namespace qsnapshot {
 			virtual void fastShow();
 
 			bool compositing;
+			QPoint origPos;
 		};
 
 	}

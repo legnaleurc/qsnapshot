@@ -18,7 +18,8 @@ bool QSnapshot::Strategy::inject() {
 
 QSnapshot::Strategy::Strategy( QSnapshot * host ):
 QSnapshot::Private( host ),
-compositing( false ) {
+compositing( false ),
+origPos( host->pos() ) {
 	Display * dpy = QX11Info::display();
 	char net_wm_cm_name[20];
 	snprintf( net_wm_cm_name, 20, "_NET_WM_CM_S%d", DefaultScreen( dpy ) );
@@ -28,17 +29,16 @@ compositing( false ) {
 }
 
 void QSnapshot::Strategy::fastHide() {
-	// NOTE dirty hack
 	this->host->hide();
+	// NOTE dirty hack to avoid those window effects provide by window managers
 	if( this->compositing ) {
+		this->origPos = this->host->pos();
 		this->host->move( -10000, -10000 );
 		delayGUI( 200 );
 	}
 }
 
 void QSnapshot::Strategy::fastShow() {
-	// TODO restore original position
-	this->host->move( 0, 0 );
-	this->host->move( QApplication::desktop()->geometry().center() - this->host->geometry().center() );
+	this->host->move( this->origPos );
 	this->host->show();
 }
