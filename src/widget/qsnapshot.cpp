@@ -197,9 +197,11 @@ void QSnapshot::Private::setPreview( const QPixmap & pixmap ) {
 }
 
 void QSnapshot::Private::fastHide() {
+	this->host->hide();
 }
 
 void QSnapshot::Private::fastShow() {
+	this->host->show();
 }
 
 void QSnapshot::Private::postNew() {
