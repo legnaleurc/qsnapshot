@@ -16,47 +16,40 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "savingdialogprivate.hpp"
+#include "../../src/widget/savingdialog.hpp"
 
 #include <QtGui/QDesktopServices>
+#include <QtGui/QFileDialog>
 
-#include <QtGui/QApplication>
-#include <tchar.h>
-#include <Windows.h>
-#include <CommDlg.h>
+#include <memory>
 
-using qsnapshot::widget::SavingDialog;
+QString qsnapshot::widget::getSaveFileName( QWidget * parent ) {
+	static QString initPath( QDesktopServices::storageLocation( QDesktopServices::PicturesLocation ) );
 
-SavingDialog::Private::Private():
-savePath( QDesktopServices::storageLocation( QDesktopServices::PicturesLocation ) ) {
-}
+	std::unique_ptr< QFileDialog > dialog( new QFileDialog( parent ) );
 
-QString SavingDialog::Private::guessDefaultName() const {
-	QDir d( this->savePath );
-	QString tpl( "sshot-%1.png" );
-	for( int i = 1; ; ++i ) {
-		if( !d.exists( tpl.arg( i ) ) ) {
-			tpl = tpl.arg( i );
-			break;
-		}
+	dialog->setAcceptMode( QFileDialog::AcceptSave );
+	dialog->setDirectory( initPath );
+	// pick a good default name
+	QString name( guessDefaultFileName( initPath ) );
+	dialog->selectFile( name );
+	// TODO add file format support
+	dialog->setDefaultSuffix( "png" );
+	dialog->setNameFilter( "PNG files (*.png)" );
+
+	if( QDialog::Accepted != dialog->exec() ) {
+		return QString();
 	}
-	return tpl;
-}
 
-SavingDialog::SavingDialog( QWidget * parent ):
-QFileDialog( parent ),
-p_( new Private ) {
-	this->setAcceptMode( QFileDialog::AcceptSave );
-}
+	initPath = dialog->directory().absolutePath();
 
-void SavingDialog::setVisible( bool visible ) {
-	if( visible ) {
-		this->setDirectory( this->p_->savePath );
-		// pick a good default name
-		QString name( this->p_->guessDefaultName() );
-		this->selectFile( name );
-	} else {
-		this->p_->savePath = this->directory().absolutePath();
+	QStringList filePaths( dialog->selectedFiles() );
+	if( filePaths.empty() ) {
+		return QString();
 	}
-	this->QFileDialog::setVisible( visible );
+	QFileInfo fileInfo( filePaths.at( 0 ) );
+	if( fileInfo.exists() && !fileInfo.isFile() ) {
+		return QString();
+	}
+	return fileInfo.absoluteFilePath();
 }

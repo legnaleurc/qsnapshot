@@ -21,7 +21,6 @@
 
 #include "qsnapshot.hpp"
 #include "ui_qsnapshot.h"
-#include "savingdialog.hpp"
 #include "snapshottimer.hpp"
 #include "regiongrabber.hpp"
 #include "windowgrabber.hpp"

@@ -17,6 +17,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "qsnapshotprivate.hpp"
+#include "savingdialog.hpp"
 
 #include <QtGui/QDesktopWidget>
 #include <QtCore/QTimer>
@@ -98,22 +99,8 @@ void QSnapshot::Private::onSaveAs() {
 	if( this->snapshot.isNull() ) {
 		return;
 	}
-#if 0
-	if( QDialog::Accepted != this->savingDialog->exec() ) {
-		return;
-	}
-	QStringList filePaths( this->savingDialog->selectedFiles() );
-	if( filePaths.empty() ) {
-		return;
-	}
-	QFileInfo fileInfo( filePaths.at( 0 ) );
-	if( fileInfo.exists() && !fileInfo.isFile() ) {
-		return;
-	}
-#endif
 	QString filePath( getSaveFileName( this->host ) );
-	QFileInfo fileInfo( filePath );
-	this->snapshot.save( fileInfo.absoluteFilePath() );
+	this->snapshot.save( filePath );
 }
 
 void QSnapshot::Private::onCopy() {

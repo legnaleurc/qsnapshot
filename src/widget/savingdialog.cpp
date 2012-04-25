@@ -18,6 +18,8 @@
 */
 #include "savingdialog.hpp"
 
+#include <QtCore/QDir>
+
 QString qsnapshot::widget::guessDefaultFileName( const QString & path ) {
 	QDir d( path );
 	QString tpl( "sshot-%1.png" );
