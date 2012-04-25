@@ -8,6 +8,9 @@ namespace qsnapshot {
 
 		class QSnapshot::Strategy : public QSnapshot::Private {
 		public:
+			static bool inject();
+			static const bool HACK;
+
 			explicit Strategy( QSnapshot * host );
 
 			virtual void fastHide();

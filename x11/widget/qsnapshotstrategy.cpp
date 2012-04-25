@@ -7,6 +7,15 @@
 
 using qsnapshot::widget::QSnapshot;
 
+const bool QSnapshot::Strategy::HACK = QSnapshot::Strategy::inject();
+
+bool QSnapshot::Strategy::inject() {
+	QSnapshot::Private::creator() = []( QSnapshot * host )->QSnapshot::Private * {
+		return new QSnapshot::Strategy( host );
+	};
+	return true;
+}
+
 QSnapshot::Strategy::Strategy( QSnapshot * host ):
 QSnapshot::Private( host ),
 compositing( false ) {

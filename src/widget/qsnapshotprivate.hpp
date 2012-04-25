@@ -34,6 +34,8 @@ namespace qsnapshot {
 		class QSnapshot::Private : public QObject {
 			Q_OBJECT
 		public:
+			static std::function< Private * ( QSnapshot * ) > & creator();
+			static Private * createInstance( QSnapshot * host );
 			static void delayGUI( int msec );
 
 			explicit Private( QSnapshot * host );

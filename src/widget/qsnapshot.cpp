@@ -42,6 +42,18 @@ namespace {
 
 using namespace qsnapshot::widget;
 
+std::function< QSnapshot::Private * ( QSnapshot * ) > & QSnapshot::Private::creator() {
+	static std::function< QSnapshot::Private * ( QSnapshot * ) > f = nullptr;
+	return f;
+}
+
+QSnapshot::Private * QSnapshot::Private::createInstance( QSnapshot * host ) {
+	if( Private::creator() == nullptr ) {
+		return new Private( host );
+	}
+	return Private::creator()( host );
+}
+
 void QSnapshot::Private::delayGUI( int msec ) {
 	QEventLoop wait;
 	QTimer::singleShot( msec, &wait, SLOT( quit() ) );
@@ -269,7 +281,7 @@ void QSnapshot::Private::startGrab() {
 
 QSnapshot::QSnapshot() :
 QWidget(),
-p_( new Private( this ) ) {
+p_( Private::createInstance( this ) ) {
 	// NOTE somehow eventFilter will be triggered between
 	// new Private( this ) and p_ = new Private
 	this->p_->grabber->installEventFilter( this );
