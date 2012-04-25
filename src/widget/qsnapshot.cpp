@@ -63,7 +63,6 @@ ui(),
 grabber( new QWidget( 0, Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ) ),
 grabTimer( new SnapshotTimer( host ) ),
 regionGrabber( new RegionGrabber( this->host ) ),
-savingDialog( new SavingDialog( this->host ) ),
 windowGrabber( new WindowGrabber( 0 ) ),
 snapshot(),
 savedPosition(),
@@ -99,6 +98,7 @@ void QSnapshot::Private::onSaveAs() {
 	if( this->snapshot.isNull() ) {
 		return;
 	}
+#if 0
 	if( QDialog::Accepted != this->savingDialog->exec() ) {
 		return;
 	}
@@ -110,6 +110,9 @@ void QSnapshot::Private::onSaveAs() {
 	if( fileInfo.exists() && !fileInfo.isFile() ) {
 		return;
 	}
+#endif
+	QString filePath( getSaveFileName( this->host ) );
+	QFileInfo fileInfo( filePath );
 	this->snapshot.save( fileInfo.absoluteFilePath() );
 }
 

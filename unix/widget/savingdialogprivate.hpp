@@ -24,6 +24,17 @@
 namespace qsnapshot {
 	namespace widget {
 
+		class SavingDialog : public QFileDialog {
+		public:
+			explicit SavingDialog( QWidget * parent );
+
+			virtual void setVisible( bool visible );
+
+		private:
+			class Private;
+			std::unique_ptr< Private > p_;
+		};
+
 		class SavingDialog::Private {
 		public:
 			Private();

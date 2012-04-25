@@ -40,6 +40,9 @@ include(InstallRequiredSystemLibraries)
 set(CMAKE_DEBUG_POSTFIX d)
 if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pedantic -Wextra -Wall -pipe")
+elseif(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-")
+    add_definitions(/D_UNICODE)
 endif()
 
 # hack MSVC path

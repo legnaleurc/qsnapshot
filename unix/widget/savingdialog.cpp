@@ -16,10 +16,23 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "savingdialog.hpp"
+#include "savingdialogprivate.hpp"
 
-QString qsnapshot::widget::guessDefaultFileName( const QString & path ) {
-	QDir d( path );
+#include <QtGui/QDesktopServices>
+
+#include <QtGui/QApplication>
+#include <tchar.h>
+#include <Windows.h>
+#include <CommDlg.h>
+
+using qsnapshot::widget::SavingDialog;
+
+SavingDialog::Private::Private():
+savePath( QDesktopServices::storageLocation( QDesktopServices::PicturesLocation ) ) {
+}
+
+QString SavingDialog::Private::guessDefaultName() const {
+	QDir d( this->savePath );
 	QString tpl( "sshot-%1.png" );
 	for( int i = 1; ; ++i ) {
 		if( !d.exists( tpl.arg( i ) ) ) {
@@ -28,4 +41,22 @@ QString qsnapshot::widget::guessDefaultFileName( const QString & path ) {
 		}
 	}
 	return tpl;
+}
+
+SavingDialog::SavingDialog( QWidget * parent ):
+QFileDialog( parent ),
+p_( new Private ) {
+	this->setAcceptMode( QFileDialog::AcceptSave );
+}
+
+void SavingDialog::setVisible( bool visible ) {
+	if( visible ) {
+		this->setDirectory( this->p_->savePath );
+		// pick a good default name
+		QString name( this->p_->guessDefaultName() );
+		this->selectFile( name );
+	} else {
+		this->p_->savePath = this->directory().absolutePath();
+	}
+	this->QFileDialog::setVisible( visible );
 }
