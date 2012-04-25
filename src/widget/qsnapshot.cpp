@@ -29,9 +29,6 @@
 #ifdef _MSC_VER
 # include <QtCore/QLibrary>
 # include <dwmapi.h>
-#elif defined( Q_WS_X11 )
-# include <QtGui/QX11Info>
-# include <X11/Xlib.h>
 #endif
 
 namespace {
@@ -41,15 +38,15 @@ namespace {
 	const int CurrentScreen = 0;
 	const int Region_ = 2;
 
-	void delayGUI( int msec ) {
-		QEventLoop wait;
-		QTimer::singleShot( msec, &wait, SLOT( quit() ) );
-		wait.exec();
-	}
-
 }
 
 using namespace qsnapshot::widget;
+
+void QSnapshot::Private::delayGUI( int msec ) {
+	QEventLoop wait;
+	QTimer::singleShot( msec, &wait, SLOT( quit() ) );
+	wait.exec();
+}
 
 QSnapshot::Private::Private( QSnapshot * host ):
 QObject( host ),
@@ -127,7 +124,7 @@ void QSnapshot::Private::onCopy() {
 
 void QSnapshot::Private::grab() {
 	this->savedPosition = this->host->pos();
-	this->setFastHide( true );
+	this->fastHide();
 
 	if( this->delay() > 0 ) {
 		this->grabTimer->start( this->delay() );
@@ -183,7 +180,7 @@ void QSnapshot::Private::performGrab() {
 	if( this->savedPosition != QPoint( -1, -1 ) ) {
 		this->host->move( this->savedPosition );
 	}
-	this->setFastHide( false );
+	this->fastShow();
 }
 
 void QSnapshot::Private::updatePreview() {
@@ -197,6 +194,13 @@ void QSnapshot::Private::setPreview( const QPixmap & pixmap ) {
 	this->ui.preview->adjustSize();
 }
 
+void QSnapshot::Private::fastHide() {
+}
+
+void QSnapshot::Private::fastShow() {
+}
+
+/*
 void QSnapshot::Private::setFastHide( bool fastHide ) {
 #ifdef _MSC_VER
 	typedef HRESULT (WINAPI * Function)( HWND, DWORD, LPCVOID, DWORD );
@@ -208,30 +212,10 @@ void QSnapshot::Private::setFastHide( bool fastHide ) {
 	HRESULT hr = f( this->host->winId(), DWMWA_TRANSITIONS_FORCEDISABLED, &dwAttribute, sizeof( dwAttribute ) );
 	// TODO throw warning if failed
 	SUCCEEDED( hr );
-#elif defined( Q_WS_X11 )
-	if( fastHide ) {
-		// NOTE dirty hack
-		this->host->move( -10000, -10000 );
-	} else {
-		// NOTE restore original position
-		this->host->move( 0, 0 );
-		this->host->move( QApplication::desktop()->geometry().center() - this->host->geometry().center() );
-	}
-#else
 #endif
 	this->host->setVisible( !fastHide );
-#ifdef Q_WS_X11
-	Display * dpy = QX11Info::display();
-	char net_wm_cm_name[20];
-	snprintf( net_wm_cm_name, 20, "_NET_WM_CM_S%d", DefaultScreen( dpy ) );
-	Atom net_wm_cm = XInternAtom( dpy, net_wm_cm_name, 0 );
-	Window wm_owner = XGetSelectionOwner( dpy, net_wm_cm );
-	bool compositingActive = wm_owner != None;
-	if( compositingActive ) {
-		delayGUI( 200 );
-	}
-#endif
 }
+*/
 
 int QSnapshot::Private::delay() const {
 	return this->ui.snapshotDelay->value();
@@ -253,7 +237,7 @@ void QSnapshot::Private::onRegionGrabbed( const QPixmap & p ) {
 	}
 
 	QApplication::restoreOverrideCursor();
-	this->setFastHide( false );
+	this->fastShow();
 }
 
 void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
@@ -264,7 +248,7 @@ void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
 	}
 
 	QApplication::restoreOverrideCursor();
-	this->setFastHide( false );
+	this->fastShow();
 }
 
 void QSnapshot::Private::startGrab() {

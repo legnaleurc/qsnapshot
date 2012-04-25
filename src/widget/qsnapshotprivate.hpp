@@ -34,13 +34,17 @@ namespace qsnapshot {
 		class QSnapshot::Private : public QObject {
 			Q_OBJECT
 		public:
+			static void delayGUI( int msec );
+
 			explicit Private( QSnapshot * host );
+
+			virtual void fastShow();
+			virtual void fastHide();
 
 			void grabRegion();
 			void performGrab();
 			void updatePreview();
 			void setPreview( const QPixmap & pixmap );
-			void setFastHide( bool fastHide );
 
 			int delay() const;
 			int mode() const;

@@ -37,6 +37,8 @@ namespace qsnapshot {
 		private:
 			class Private;
 			friend class Private;
+			class Strategy;
+			friend class Strategy;
 			Private * p_;
 		};
 
