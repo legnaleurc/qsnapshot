@@ -26,11 +26,6 @@
 
 #include <QtDebug>
 
-#ifdef _MSC_VER
-# include <QtCore/QLibrary>
-# include <dwmapi.h>
-#endif
-
 namespace {
 
 	const int ChildWindow = 3;
@@ -206,23 +201,6 @@ void QSnapshot::Private::fastShow() {
 
 void QSnapshot::Private::postNew() {
 }
-
-/*
-void QSnapshot::Private::setFastHide( bool fastHide ) {
-#ifdef _MSC_VER
-	typedef HRESULT (WINAPI * Function)( HWND, DWORD, LPCVOID, DWORD );
-	Function f = reinterpret_cast< Function >( QLibrary::resolve( "dwmapi", "DwmSetWindowAttribute" ) );
-	if( f == NULL ) {
-		return;
-	}
-	LPCVOID dwAttribute = reinterpret_cast< LPCVOID >( fastHide );
-	HRESULT hr = f( this->host->winId(), DWMWA_TRANSITIONS_FORCEDISABLED, &dwAttribute, sizeof( dwAttribute ) );
-	// TODO throw warning if failed
-	SUCCEEDED( hr );
-#endif
-	this->host->setVisible( !fastHide );
-}
-*/
 
 int QSnapshot::Private::delay() const {
 	return this->ui.snapshotDelay->value();
