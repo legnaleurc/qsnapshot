@@ -26,6 +26,7 @@
 #include "regiongrabber.hpp"
 #include "windowgrabber.hpp"
 
+#include <functional>
 #include <memory>
 
 namespace qsnapshot {
