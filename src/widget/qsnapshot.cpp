@@ -73,7 +73,6 @@ modified( false ) {
 	this->ui.snapshotDelay->setSuffix( QObject::tr( " second(s)", "" ) );
 
 	this->grabber->move( 0, 0 );
-	this->grabber->setWindowOpacity( 0.1 );
 	this->grabber->resize( QApplication::desktop()->screenGeometry().size() );
 	QPalette p = this->grabber->palette();
 	p.setBrush( this->grabber->backgroundRole(), QColor( 0, 0, 0 ) );
@@ -200,6 +199,8 @@ void QSnapshot::Private::fastShow() {
 }
 
 void QSnapshot::Private::postNew() {
+	// except X11, somehow opacity == 0.0 will block events
+	this->grabber->setWindowOpacity( 0.1 );
 }
 
 int QSnapshot::Private::delay() const {

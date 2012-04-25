@@ -44,6 +44,8 @@ void QSnapshot::Strategy::fastShow() {
 }
 
 void QSnapshot::Strategy::postNew() {
+	// to avoid grabber remain on screen
+	this->grabber->setWindowOpacity( 0.0 );
 #ifdef HAVE_X11_EXTENSIONS_XFIXES_H
 	int tmp1, tmp2;
 	//Check whether the XFixes extension is available
