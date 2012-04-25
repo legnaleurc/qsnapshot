@@ -15,6 +15,7 @@ namespace qsnapshot {
 
 			virtual void fastHide();
 			virtual void fastShow();
+			virtual void postNew();
 
 			bool compositing;
 			QPoint origPos;

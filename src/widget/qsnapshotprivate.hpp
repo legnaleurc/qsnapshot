@@ -42,6 +42,7 @@ namespace qsnapshot {
 
 			virtual void fastShow();
 			virtual void fastHide();
+			virtual void postNew();
 
 			void grabRegion();
 			void performGrab();

@@ -84,17 +84,7 @@ modified( false ) {
 	p.setBrush( this->grabber->backgroundRole(), QColor( 0, 0, 0 ) );
 	this->grabber->setPalette( p );
 
-#ifdef HAVE_X11_EXTENSIONS_XFIXES_H
-	{
-		int tmp1, tmp2;
-		//Check whether the XFixes extension is available
-		Display *dpy = QX11Info::display();
-		if (!XFixesQueryExtension( dpy, &tmp1, &tmp2 )) {
-			mainWidget->cbIncludePointer->hide();
-			mainWidget->lblIncludePointer->hide();
-		}
-	}
-#elif !defined(Q_WS_WIN)
+#ifndef Q_WS_WIN
 //	this->ui.cbIncludePointer->hide();
 //	this->ui.lblIncludePointer->hide();
 #endif
@@ -212,6 +202,9 @@ void QSnapshot::Private::fastHide() {
 void QSnapshot::Private::fastShow() {
 }
 
+void QSnapshot::Private::postNew() {
+}
+
 /*
 void QSnapshot::Private::setFastHide( bool fastHide ) {
 #ifdef _MSC_VER
@@ -282,6 +275,7 @@ void QSnapshot::Private::startGrab() {
 QSnapshot::QSnapshot() :
 QWidget(),
 p_( Private::createInstance( this ) ) {
+	this->p_->postNew();
 	// NOTE somehow eventFilter will be triggered between
 	// new Private( this ) and p_ = new Private
 	this->p_->grabber->installEventFilter( this );

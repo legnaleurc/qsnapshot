@@ -42,3 +42,15 @@ void QSnapshot::Strategy::fastShow() {
 	this->host->move( this->origPos );
 	this->host->show();
 }
+
+void QSnapshot::Strategy::postNew() {
+#ifdef HAVE_X11_EXTENSIONS_XFIXES_H
+	int tmp1, tmp2;
+	//Check whether the XFixes extension is available
+	Display *dpy = QX11Info::display();
+	if (!XFixesQueryExtension( dpy, &tmp1, &tmp2 )) {
+		mainWidget->cbIncludePointer->hide();
+		mainWidget->lblIncludePointer->hide();
+	}
+#endif
+}
