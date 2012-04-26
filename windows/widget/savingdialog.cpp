@@ -22,6 +22,8 @@
 #include <Windows.h>
 #include <CommDlg.h>
 
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopServices>
 
