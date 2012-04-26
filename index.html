@@ -2,10 +2,12 @@
 <html>
 	<head>
 		<meta charset='utf-8'>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<title>legnaleurc/qsnapshot @ GitHub</title>
 
 		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
 	</head>
 
@@ -27,10 +29,20 @@
 					<span>A screen capture tool</span>
 				</p>
 
-				<p class="pull-right">
-					<strong>Download latest version (v0.1.0) for</strong>
-					<a class="btn btn-large" href="https://github.com/downloads/legnaleurc/qsnapshot/QSnapshot-0.1.0-win32.exe">Windows</a>
-					<a class="btn btn-large" href="https://github.com/downloads/legnaleurc/qsnapshot/QSnapshot-0.1.0-Darwin.dmg">Mac OS X</a>
+				<p>
+					<div class="btn-group pull-right">
+						<a class="btn btn-large dropdown-toggle" data-toggle="dropdown" href="#">Download latest version (v0.1.0)<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot-debian/qsnapshot_0.1.0-1_i386.deb">Debian Squeeze i386</a></li>
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot-debian/qsnapshot_0.1.0-1_amd64.deb">Debian Squeeze amd64</a></li>
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot-debian/qsnapshot_0.1.0-2_i386.deb">Debian Testing i386</a></li>
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot-debian/qsnapshot_0.1.0-2_amd64.deb">Debian Testing amd64</a></li>
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot-debian/qsnapshot_0.1.0-2_i386.deb">Debian Unstable i386</a></li>
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot-debian/qsnapshot_0.1.0-2_amd64.deb">Debian Unstable amd64</a></li>
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot/QSnapshot-0.1.0-Darwin.dmg">Mac OS X</a></li>
+							<li><a href="https://github.com/downloads/legnaleurc/qsnapshot/QSnapshot-0.1.0-win32.exe">Windows</a></li>
+						</ul>
+					</div>
 				</p>
 
 			</div>
@@ -90,5 +102,7 @@
 
 		</div>
 
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	</body>
 </html>
