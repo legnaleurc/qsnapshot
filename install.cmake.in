@@ -17,11 +17,11 @@
 
 if(APPLE)
     set(APPS "${CMAKE_INSTALL_PREFIX}/qsnapshot.app")
-    set(DIRS "${QT_LIBRARY_DIRS}")
+    set(DIRS "@QT_LIBRARY_DIR@")
     file(WRITE "${CMAKE_INSTALL_PREFIX}/qsnapshot.app/Contents/Resources/qt.conf" "")
 elseif(WIN32)
     set(APPS "${CMAKE_INSTALL_PREFIX}/bin/qsnapshot.exe")
-    set(DIRS "${QT_LIBRARY_DIRS}")
+    set(DIRS "@QT_LIBRARY_DIR@")
     file(WRITE "${CMAKE_INSTALL_PREFIX}/bin/qt.conf" "")
 endif()
 
