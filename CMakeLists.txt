@@ -17,13 +17,15 @@
 
 cmake_minimum_required(VERSION 2.6)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
 project(QSnapshot)
 set(QSNAPSHOT_VERSION_MAJOR "0")
 set(QSNAPSHOT_VERSION_MINOR "1")
 set(QSNAPSHOT_VERSION_PATCH "0")
 set(QSNAPSHOT_VERSION "${QSNAPSHOT_VERSION_MAJOR}.${QSNAPSHOT_VERSION_MINOR}.${QSNAPSHOT_VERSION_PATCH}")
 
-configure_file("qsnapshot_config.h.in" "qsnapshot_config.h")
+configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/qsnapshot_config.h.in" "qsnapshot_config.h")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
@@ -126,7 +128,7 @@ install(TARGETS QSnapshot
     RUNTIME DESTINATION "bin" COMPONENT Runtime
     BUNDLE DESTINATION "." COMPONENT Runtime)
 if(APPLE OR WIN32)
-    configure_file("install.cmake.in" "${CMAKE_BINARY_DIR}/install.cmake" @ONLY)
+    configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/install.cmake.in" "${CMAKE_BINARY_DIR}/install.cmake" @ONLY)
     install(SCRIPT "${CMAKE_BINARY_DIR}/install.cmake" COMPONENT Runtime)
 endif()
 
