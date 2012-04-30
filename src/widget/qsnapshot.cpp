@@ -25,8 +25,6 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QClipboard>
 
-#include <QtDebug>
-
 namespace {
 
 	const int ChildWindow = 3;
@@ -77,11 +75,6 @@ modified( false ) {
 	QPalette p = this->grabber->palette();
 	p.setBrush( this->grabber->backgroundRole(), QColor( 0, 0, 0 ) );
 	this->grabber->setPalette( p );
-
-#ifndef Q_WS_WIN
-//	this->ui.cbIncludePointer->hide();
-//	this->ui.lblIncludePointer->hide();
-#endif
 
 	if( qApp->desktop()->numScreens() < 2 ) {
 //		this->ui->comboMode->removeItem(CurrentScreen);
@@ -154,11 +147,6 @@ void QSnapshot::Private::performGrab() {
 	} else {
 		this->snapshot = QPixmap::grabWindow( QApplication::desktop()->winId() );
 	}
-#ifdef HAVE_X11_EXTENSIONS_XFIXES_H
-	if( haveXFixes && includePointer() ) {
-		grabPointerImage(x, y);
-	}
-#endif
 
 	this->updatePreview();
 	QApplication::restoreOverrideCursor();
