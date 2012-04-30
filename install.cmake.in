@@ -21,7 +21,7 @@ if(APPLE)
     file(WRITE "${CMAKE_INSTALL_PREFIX}/qsnapshot.app/Contents/Resources/qt.conf" "")
 elseif(WIN32)
     set(APPS "${CMAKE_INSTALL_PREFIX}/bin/qsnapshot.exe")
-    set(DIRS "@QT_LIBRARY_DIR@")
+    get_filename_component(DIRS "@QT_QMAKE_EXECUTABLE@" PATH)
     file(WRITE "${CMAKE_INSTALL_PREFIX}/bin/qt.conf" "")
 endif()
 
