@@ -17,6 +17,12 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "utility/uiinspector.hpp"
+#include "qsnapshot_config.h"
+
+#ifdef HAVE_X11_EXTENSIONS_SHAPE_H
+#include <QtGui/QBitmap>
+#include <QtGui/QPainter>
+#endif // HAVE_X11_EXTENSIONS_SHAPE_H
 
 #include <X11/Xlib.h>
 #ifdef HAVE_X11_EXTENSIONS_SHAPE_H
