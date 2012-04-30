@@ -27,7 +27,7 @@ configure_file("qsnapshot_config.h.in" "qsnapshot_config.h")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-find_package(Qt4 4.7 REQUIRED)
+find_package(Qt4 4.6 REQUIRED)
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
 endif()
