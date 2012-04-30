@@ -125,8 +125,10 @@ set_target_properties(QSnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
 install(TARGETS QSnapshot
     RUNTIME DESTINATION "bin" COMPONENT Runtime
     BUNDLE DESTINATION "." COMPONENT Runtime)
-configure_file("install.cmake.in" "${CMAKE_BINARY_DIR}/install.cmake" @ONLY)
-install(SCRIPT "${CMAKE_BINARY_DIR}/install.cmake" COMPONENT Runtime)
+if(APPLE OR WIN32)
+    configure_file("install.cmake.in" "${CMAKE_BINARY_DIR}/install.cmake" @ONLY)
+    install(SCRIPT "${CMAKE_BINARY_DIR}/install.cmake" COMPONENT Runtime)
+endif()
 
 # package part
 set(CPACK_PACKAGE_VERSION_MAJOR ${QSNAPSHOT_VERSION_MAJOR})
