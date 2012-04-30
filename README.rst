@@ -26,6 +26,7 @@ You need following tools:
         * `GNU Compiler Collection`_ >= 4.6 [#]_
     * GNU/Linux
         * `GNU Compiler Collection`_ >= 4.6
+	* `X11 libraries`_
         * `X11 shape extension`_ (optional)
 
 How to build
@@ -62,5 +63,6 @@ How to build package
 .. _Microsoft Visual C++: http://www.microsoft.com/visualstudio/en-us/products/2010-editions
 .. _KSnapshot: http://kde.org/applications/graphics/ksnapshot/
 .. _Qt: http://qt.nokia.com/products/
+.. _X11 libraries: http://www.x.org/wiki/
 .. _X11 shape extension: http://www.x.org/releases/X11R7.6/doc/libXext/shapelib.html
 .. _XCode: https://developer.apple.com/xcode/
