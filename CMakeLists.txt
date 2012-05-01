@@ -33,8 +33,6 @@ endif()
 include(${QT_USE_FILE})
 set(HAVE_X11_EXTENSIONS_SHAPE_H ${X11_Xshape_FOUND})
 set(HAVE_X11_EXTENSIONS_XFIXES_H ${X11_Xfixes_FOUND})
-message(STATUS ${HAVE_X11_EXTENSIONS_SHAPE_H})
-message(STATUS ${HAVE_X11_EXTENSIONS_XFIXES_H})
 include(InstallRequiredSystemLibraries)
 
 configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/qsnapshot_config.h.in" "qsnapshot_config.h")
