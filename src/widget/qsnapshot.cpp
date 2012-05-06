@@ -34,6 +34,13 @@ namespace {
 
 }
 
+namespace i18n {
+
+	const QString DELAY_SUFFIX = QObject::tr( " second(s)", "" );
+	const QString REGION_TIP = QObject::tr( "Preview of the snapshot image (%1 x %2)" );
+
+}
+
 using namespace qsnapshot::widget;
 
 std::function< QSnapshot::Private * ( QSnapshot * ) > & QSnapshot::Private::creator() {
@@ -68,7 +75,7 @@ savedPosition(),
 modified( false ) {
 	this->ui.setupUi( host );
 
-	this->ui.snapshotDelay->setSuffix( QObject::tr( " second(s)", "" ) );
+	this->ui.snapshotDelay->setSuffix( i18n::DELAY_SUFFIX );
 
 	this->grabber->move( 0, 0 );
 	this->grabber->resize( QApplication::desktop()->screenGeometry().size() );
@@ -162,7 +169,7 @@ void QSnapshot::Private::updatePreview() {
 }
 
 void QSnapshot::Private::setPreview( const QPixmap & pixmap ) {
-	this->ui.preview->setToolTip( QObject::tr( "Preview of the snapshot image (%1 x %2)" ).arg( pixmap.width() ).arg( pixmap.height() ) );
+	this->ui.preview->setToolTip( i18n::REGION_TIP.arg( pixmap.width() ).arg( pixmap.height() ) );
 
 	this->ui.preview->setPixmap( pixmap.scaled( this->ui.preview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation ) );
 	this->ui.preview->adjustSize();

@@ -23,10 +23,9 @@
 #include <QtGui/QPainter>
 #include <QtGui/QToolTip>
 
-namespace {
+namespace i18n {
 
-	const char * ONE_SECOND = "Snapshot will be taken in 1 second";
-	const char * MORE_SECONDS = "Snapshot will be taken in %1 seconds";
+	const QString HELP_TEXT = QObject::tr( "Snapshot will be taken in %1 second(s)", "" );
 
 }
 
@@ -45,7 +44,7 @@ QWidget( parent ),
 p_( new Private( this ) ) {
 	this->setWindowFlags( Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint );
 	QFontMetrics m( this->fontMetrics() );
-	this->resize( m.width( QObject::tr( ONE_SECOND, MORE_SECONDS, 99 ) ) + 6, m.height() + 4 );
+	this->resize( m.width( i18n::HELP_TEXT.arg( 99 ) ) + 6, m.height() + 4 );
 
 	this->connect( this->p_->timer, SIGNAL( timeout() ), SLOT( bell() ) );
 }
@@ -105,7 +104,7 @@ void SnapshotTimer::paintEvent( QPaintEvent * /*event*/ ) {
 	}
 	painter.setPen( textColor );
 	painter.setBrush( textBackgroundColor );
-	const QString HELP_TEXT = QObject::tr( ONE_SECOND, MORE_SECONDS, this->p_->length - this->p_->time );
-	this->p_->textRect = painter.boundingRect( this->rect().adjusted( 2, 2, -2, -2 ), Qt::AlignHCenter | Qt::TextSingleLine, HELP_TEXT );
-	painter.drawText( this->p_->textRect, HELP_TEXT );
+	QString helpText = i18n::HELP_TEXT.arg( this->p_->length - this->p_->time );
+	this->p_->textRect = painter.boundingRect( this->rect().adjusted( 2, 2, -2, -2 ), Qt::AlignHCenter | Qt::TextSingleLine, helpText );
+	painter.drawText( this->p_->textRect, helpText );
 }

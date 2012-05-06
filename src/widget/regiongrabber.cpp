@@ -49,6 +49,12 @@ namespace {
 
 }
 
+namespace i18n {
+
+	const QString HELP_TEXT = QObject::tr( "Select a region using the mouse. To take the snapshot, press the Enter key or double click. Press Esc to quit." );
+
+}
+
 using namespace qsnapshot::widget;
 
 RegionGrabber::Private::Private( RegionGrabber * host ):
@@ -200,11 +206,10 @@ void RegionGrabber::paintEvent( QPaintEvent * /*event*/ ) {
 	if( this->p_->showHelp ) {
 		painter.setPen( textColor );
 		painter.setBrush( textBackgroundColor );
-		QString helpText( QObject::tr( "Select a region using the mouse. To take the snapshot, press the Enter key or double click. Press Esc to quit." ) );
-		this->p_->helpTextRect = painter.boundingRect( rect().adjusted( 2, 2, -2, -2 ), Qt::TextWordWrap, helpText );
+		this->p_->helpTextRect = painter.boundingRect( rect().adjusted( 2, 2, -2, -2 ), Qt::TextWordWrap, i18n::HELP_TEXT );
 		this->p_->helpTextRect.adjust( -2, -2, 4, 2 );
 		drawRect( &painter, this->p_->helpTextRect, textColor, textBackgroundColor );
-		painter.drawText( this->p_->helpTextRect.adjusted( 3, 3, -3, -3 ), helpText );
+		painter.drawText( this->p_->helpTextRect.adjusted( 3, 3, -3, -3 ), i18n::HELP_TEXT );
 	}
 
 	if( this->p_->selection.isNull() ) {
