@@ -28,6 +28,8 @@ namespace qsnapshot {
 			Q_OBJECT
 
 		public:
+			class Strategy;
+
 			QSnapshot();
 
 		protected:
@@ -37,8 +39,6 @@ namespace qsnapshot {
 		private:
 			class Private;
 			friend class Private;
-			class Strategy;
-			friend class Strategy;
 			Private * p_;
 		};
 

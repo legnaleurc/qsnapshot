@@ -20,12 +20,12 @@
 #define QSNAPSHOT_WIDGET_QSNAPSHOT_PRIVATE_HPP
 
 #include "qsnapshot.hpp"
+#include "qsnapshotstrategy.hpp"
 #include "ui_qsnapshot.h"
 #include "snapshottimer.hpp"
 #include "regiongrabber.hpp"
 #include "windowgrabber.hpp"
 
-#include <functional>
 #include <memory>
 
 namespace qsnapshot {
@@ -34,15 +34,7 @@ namespace qsnapshot {
 		class QSnapshot::Private : public QObject {
 			Q_OBJECT
 		public:
-			static std::function< Private * ( QSnapshot * ) > & creator();
-			static Private * createInstance( QSnapshot * host );
-			static void delayGUI( int msec );
-
 			explicit Private( QSnapshot * host );
-
-			virtual void fastShow();
-			virtual void fastHide();
-			virtual void postNew();
 
 			void grabRegion();
 			void performGrab();
@@ -64,6 +56,7 @@ namespace qsnapshot {
 		public:
 			QSnapshot * host;
 			Ui::QSnapshot ui;
+			std::unique_ptr< QSnapshot::Strategy > strategy;
 			std::shared_ptr< QWidget > grabber;
 			SnapshotTimer * grabTimer;
 			RegionGrabber * regionGrabber;

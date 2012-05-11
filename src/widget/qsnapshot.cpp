@@ -32,6 +32,12 @@ namespace {
 	const int CurrentScreen = 0;
 	const int Region_ = 2;
 
+	void delayGUI( int msec ) {
+		QEventLoop wait;
+		QTimer::singleShot( msec, &wait, SLOT( quit() ) );
+		wait.exec();
+	}
+
 }
 
 namespace i18n {
@@ -43,28 +49,11 @@ namespace i18n {
 
 using namespace qsnapshot::widget;
 
-std::function< QSnapshot::Private * ( QSnapshot * ) > & QSnapshot::Private::creator() {
-	static std::function< QSnapshot::Private * ( QSnapshot * ) > f = nullptr;
-	return f;
-}
-
-QSnapshot::Private * QSnapshot::Private::createInstance( QSnapshot * host ) {
-	if( Private::creator() == nullptr ) {
-		return new Private( host );
-	}
-	return Private::creator()( host );
-}
-
-void QSnapshot::Private::delayGUI( int msec ) {
-	QEventLoop wait;
-	QTimer::singleShot( msec, &wait, SLOT( quit() ) );
-	wait.exec();
-}
-
 QSnapshot::Private::Private( QSnapshot * host ):
 QObject( host ),
 host( host ),
 ui(),
+strategy( Strategy::createInstance( host ) ),
 // NOTE Windows and Mac OS X flag
 grabber( new QWidget( 0, Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ) ),
 grabTimer( new SnapshotTimer( host ) ),
@@ -110,7 +99,7 @@ void QSnapshot::Private::onCopy() {
 
 void QSnapshot::Private::grab() {
 	this->savedPosition = this->host->pos();
-	this->fastHide();
+	this->strategy->fastHide();
 
 	if( this->delay() > 0 ) {
 		this->grabTimer->start( this->delay() );
@@ -161,7 +150,7 @@ void QSnapshot::Private::performGrab() {
 	if( this->savedPosition != QPoint( -1, -1 ) ) {
 		this->host->move( this->savedPosition );
 	}
-	this->fastShow();
+	this->strategy->fastShow();
 }
 
 void QSnapshot::Private::updatePreview() {
@@ -173,19 +162,6 @@ void QSnapshot::Private::setPreview( const QPixmap & pixmap ) {
 
 	this->ui.preview->setPixmap( pixmap.scaled( this->ui.preview->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation ) );
 	this->ui.preview->adjustSize();
-}
-
-void QSnapshot::Private::fastHide() {
-	this->host->hide();
-}
-
-void QSnapshot::Private::fastShow() {
-	this->host->show();
-}
-
-void QSnapshot::Private::postNew() {
-	// except X11, somehow opacity == 0.0 will block events
-	this->grabber->setWindowOpacity( 0.1 );
 }
 
 int QSnapshot::Private::delay() const {
@@ -208,7 +184,7 @@ void QSnapshot::Private::onRegionGrabbed( const QPixmap & p ) {
 	}
 
 	QApplication::restoreOverrideCursor();
-	this->fastShow();
+	this->strategy->fastShow();
 }
 
 void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
@@ -219,7 +195,7 @@ void QSnapshot::Private::onWindowGrabbed( const QPixmap & p ) {
 	}
 
 	QApplication::restoreOverrideCursor();
-	this->fastShow();
+	this->strategy->fastShow();
 }
 
 void QSnapshot::Private::startGrab() {
@@ -240,8 +216,8 @@ void QSnapshot::Private::startGrab() {
 
 QSnapshot::QSnapshot() :
 QWidget(),
-p_( Private::createInstance( this ) ) {
-	this->p_->postNew();
+p_( new Private( this ) ) {
+//	this->p_->postNew();
 	// NOTE somehow eventFilter will be triggered between
 	// new Private( this ) and p_ = new Private
 	this->p_->grabber->installEventFilter( this );

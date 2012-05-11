@@ -1,23 +1,36 @@
-#include "qsnapshotstrategy.hpp"
+#include "x11strategy.hpp"
 
 #include <X11/Xlib.h>
 
+#include <QtCore/QEventLoop>
+#include <QtCore/QTimer>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QX11Info>
 
 using qsnapshot::widget::QSnapshot;
+using qsnapshot::widget::X11Strategy;
 
-const bool QSnapshot::Strategy::HACK = QSnapshot::Strategy::inject();
+namespace {
 
-bool QSnapshot::Strategy::inject() {
-	QSnapshot::Private::creator() = []( QSnapshot * host )->QSnapshot::Private * {
-		return new QSnapshot::Strategy( host );
-	};
-	return true;
+	bool inject() {
+		QSnapshot::Strategy::creator() = []( QSnapshot * host )->QSnapshot::Strategy * {
+			return new X11Strategy( host );
+		};
+		return true;
+	}
+
+	const bool HACK = inject();
+
+	void delayGUI( int msec ) {
+		QEventLoop wait;
+		QTimer::singleShot( msec, &wait, SLOT( quit() ) );
+		wait.exec();
+	}
+
 }
 
-QSnapshot::Strategy::Strategy( QSnapshot * host ):
-QSnapshot::Private( host ),
+X11Strategy::X11Strategy( QSnapshot * host ):
+QSnapshot::Strategy( host ),
 compositing( false ),
 origPos( host->pos() ) {
 	Display * dpy = QX11Info::display();
@@ -28,7 +41,7 @@ origPos( host->pos() ) {
 	this->compositing = wm_owner != None;
 }
 
-void QSnapshot::Strategy::fastHide() {
+void X11Strategy::fastHide() {
 	this->host->hide();
 	// NOTE dirty hack to avoid those window effects provide by window managers
 	if( this->compositing ) {
@@ -38,12 +51,13 @@ void QSnapshot::Strategy::fastHide() {
 	}
 }
 
-void QSnapshot::Strategy::fastShow() {
+void X11Strategy::fastShow() {
 	this->host->move( this->origPos );
 	this->host->show();
 }
 
-void QSnapshot::Strategy::postNew() {
+/*
+void X11Strategy::postNew() {
 	// to avoid grabber remain on screen
 	this->grabber->setWindowOpacity( 0.0 );
 #ifdef HAVE_X11_EXTENSIONS_XFIXES_H
@@ -56,3 +70,4 @@ void QSnapshot::Strategy::postNew() {
 	}
 #endif
 }
+*/
