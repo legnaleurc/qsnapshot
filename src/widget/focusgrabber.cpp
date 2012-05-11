@@ -16,36 +16,22 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
-#define QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
+#include "focusgrabber.hpp"
+#include "focusgrabberstrategy.hpp"
 
-#include "qsnapshot.hpp"
+#include <QtGui/QApplication>
+#include <QtGui/QDesktopWidget>
 
-#include <functional>
+using qsnapshot::widget::FocusGrabber;
 
-namespace qsnapshot {
-	namespace widget {
+FocusGrabber::FocusGrabber():
+QWidget( 0, Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ),
+s_( Strategy::createInstance( this ) ) {
+	this->move( 0, 0 );
+	this->resize( QApplication::desktop()->screenGeometry().size() );
+	QPalette p = this->palette();
+	p.setBrush( this->backgroundRole(), QColor( 0, 0, 0 ) );
+	this->setPalette( p );
 
-		class QSnapshot::Strategy {
-		public:
-			static std::function< Strategy * ( QSnapshot * ) > & creator();
-			static Strategy * createInstance( QSnapshot * host );
-
-			virtual ~Strategy();
-
-			virtual void fastHide();
-			virtual void fastShow();
-
-		protected:
-			explicit Strategy( QSnapshot * host );
-			QSnapshot * host;
-
-		private:
-			Strategy( const Strategy & );
-			Strategy & operator =( const Strategy & );
-		};
-
-	}
+	this->s_->postNew();
 }
-
-#endif

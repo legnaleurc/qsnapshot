@@ -22,6 +22,7 @@
 #include "qsnapshot.hpp"
 #include "qsnapshotstrategy.hpp"
 #include "ui_qsnapshot.h"
+#include "focusgrabber.hpp"
 #include "snapshottimer.hpp"
 #include "regiongrabber.hpp"
 #include "windowgrabber.hpp"
@@ -57,7 +58,7 @@ namespace qsnapshot {
 			QSnapshot * host;
 			Ui::QSnapshot ui;
 			std::unique_ptr< QSnapshot::Strategy > strategy;
-			std::shared_ptr< QWidget > grabber;
+			std::unique_ptr< FocusGrabber > grabber;
 			SnapshotTimer * grabTimer;
 			RegionGrabber * regionGrabber;
 			std::shared_ptr< WindowGrabber > windowGrabber;

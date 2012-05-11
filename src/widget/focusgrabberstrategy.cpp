@@ -1,5 +1,5 @@
 /*
-    QSnapshot, a screen capture tool.
+    FocusGrabber, a screen capture tool.
     Copyright (C)  2012 Wei Cheng Pan <legnaleurc@gmail>
 
     This library is free software; you can redistribute it and/or
@@ -16,36 +16,30 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
-#define QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
+#include "focusgrabberstrategy.hpp"
 
-#include "qsnapshot.hpp"
+using qsnapshot::widget::FocusGrabber;
 
-#include <functional>
-
-namespace qsnapshot {
-	namespace widget {
-
-		class QSnapshot::Strategy {
-		public:
-			static std::function< Strategy * ( QSnapshot * ) > & creator();
-			static Strategy * createInstance( QSnapshot * host );
-
-			virtual ~Strategy();
-
-			virtual void fastHide();
-			virtual void fastShow();
-
-		protected:
-			explicit Strategy( QSnapshot * host );
-			QSnapshot * host;
-
-		private:
-			Strategy( const Strategy & );
-			Strategy & operator =( const Strategy & );
-		};
-
-	}
+std::function< FocusGrabber::Strategy * ( FocusGrabber * ) > & FocusGrabber::Strategy::creator() {
+	static std::function< Strategy * ( FocusGrabber * ) > f = nullptr;
+	return f;
 }
 
-#endif
+FocusGrabber::Strategy * FocusGrabber::Strategy::createInstance( FocusGrabber * host ) {
+	if( Strategy::creator() == nullptr ) {
+		return new Strategy( host );
+	}
+	return Strategy::creator()( host );
+}
+
+FocusGrabber::Strategy::Strategy( FocusGrabber * host ):
+host( host ) {
+}
+
+FocusGrabber::Strategy::~Strategy() {
+}
+
+void FocusGrabber::Strategy::postNew() {
+	// except X11, somehow opacity == 0.0 will block events
+	this->host->setWindowOpacity( 0.1 );
+}

@@ -16,29 +16,28 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
-#define QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
+#ifndef QSNAPSHOT_WIDGET_FOCUSGRABBER_STRATEGY_HPP
+#define QSNAPSHOT_WIDGET_FOCUSGRABBER_STRATEGY_HPP
 
-#include "qsnapshot.hpp"
+#include "focusgrabber.hpp"
 
 #include <functional>
 
 namespace qsnapshot {
 	namespace widget {
 
-		class QSnapshot::Strategy {
+		class FocusGrabber::Strategy {
 		public:
-			static std::function< Strategy * ( QSnapshot * ) > & creator();
-			static Strategy * createInstance( QSnapshot * host );
+			static std::function< Strategy * ( FocusGrabber * ) > & creator();
+			static Strategy * createInstance( FocusGrabber * host );
 
 			virtual ~Strategy();
 
-			virtual void fastHide();
-			virtual void fastShow();
+			virtual void postNew();
 
 		protected:
-			explicit Strategy( QSnapshot * host );
-			QSnapshot * host;
+			explicit Strategy( FocusGrabber * host );
+			FocusGrabber * host;
 
 		private:
 			Strategy( const Strategy & );

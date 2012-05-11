@@ -55,7 +55,7 @@ host( host ),
 ui(),
 strategy( Strategy::createInstance( host ) ),
 // NOTE Windows and Mac OS X flag
-grabber( new QWidget( 0, Qt::X11BypassWindowManagerHint | Qt::FramelessWindowHint ) ),
+grabber( new FocusGrabber ),
 grabTimer( new SnapshotTimer( host ) ),
 regionGrabber( new RegionGrabber( this->host ) ),
 windowGrabber( new WindowGrabber( 0 ) ),
@@ -65,12 +65,6 @@ modified( false ) {
 	this->ui.setupUi( host );
 
 	this->ui.snapshotDelay->setSuffix( i18n::DELAY_SUFFIX );
-
-	this->grabber->move( 0, 0 );
-	this->grabber->resize( QApplication::desktop()->screenGeometry().size() );
-	QPalette p = this->grabber->palette();
-	p.setBrush( this->grabber->backgroundRole(), QColor( 0, 0, 0 ) );
-	this->grabber->setPalette( p );
 
 	if( qApp->desktop()->numScreens() < 2 ) {
 //		this->ui->comboMode->removeItem(CurrentScreen);
@@ -217,7 +211,6 @@ void QSnapshot::Private::startGrab() {
 QSnapshot::QSnapshot() :
 QWidget(),
 p_( new Private( this ) ) {
-//	this->p_->postNew();
 	// NOTE somehow eventFilter will be triggered between
 	// new Private( this ) and p_ = new Private
 	this->p_->grabber->installEventFilter( this );

@@ -1,4 +1,22 @@
-#include "x11strategy.hpp"
+/*
+    QSnapshot, a screen capture tool.
+    Copyright (C)  2012 Wei Cheng Pan <legnaleurc@gmail>
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+#include "qsnapshotstrategy.hpp"
 
 #include <X11/Xlib.h>
 
@@ -8,13 +26,13 @@
 #include <QtGui/QX11Info>
 
 using qsnapshot::widget::QSnapshot;
-using qsnapshot::widget::X11Strategy;
+using qsnapshot::widget::QSnapshotStrategy;
 
 namespace {
 
 	bool inject() {
 		QSnapshot::Strategy::creator() = []( QSnapshot * host )->QSnapshot::Strategy * {
-			return new X11Strategy( host );
+			return new QSnapshotStrategy( host );
 		};
 		return true;
 	}
@@ -29,7 +47,7 @@ namespace {
 
 }
 
-X11Strategy::X11Strategy( QSnapshot * host ):
+QSnapshotStrategy::QSnapshotStrategy( QSnapshot * host ):
 QSnapshot::Strategy( host ),
 compositing( false ),
 origPos( host->pos() ) {
@@ -41,7 +59,7 @@ origPos( host->pos() ) {
 	this->compositing = wm_owner != None;
 }
 
-void X11Strategy::fastHide() {
+void QSnapshotStrategy::fastHide() {
 	this->host->hide();
 	// NOTE dirty hack to avoid those window effects provide by window managers
 	if( this->compositing ) {
@@ -51,23 +69,7 @@ void X11Strategy::fastHide() {
 	}
 }
 
-void X11Strategy::fastShow() {
+void QSnapshotStrategy::fastShow() {
 	this->host->move( this->origPos );
 	this->host->show();
 }
-
-/*
-void X11Strategy::postNew() {
-	// to avoid grabber remain on screen
-	this->grabber->setWindowOpacity( 0.0 );
-#ifdef HAVE_X11_EXTENSIONS_XFIXES_H
-	int tmp1, tmp2;
-	//Check whether the XFixes extension is available
-	Display *dpy = QX11Info::display();
-	if (!XFixesQueryExtension( dpy, &tmp1, &tmp2 )) {
-		mainWidget->cbIncludePointer->hide();
-		mainWidget->lblIncludePointer->hide();
-	}
-#endif
-}
-*/

@@ -16,33 +16,23 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
-#define QSNAPSHOT_WIDGET_QSNAPSHOT_STRATEGY_HPP
+#ifndef QSNAPSHOT_WIDGET_QSNAPSHOTSTRATEGY_HPP
+#define QSNAPSHOT_WIDGET_QSNAPSHOTSTRATEGY_HPP
 
-#include "qsnapshot.hpp"
-
-#include <functional>
+#include "widget/qsnapshotstrategy.hpp"
 
 namespace qsnapshot {
 	namespace widget {
 
-		class QSnapshot::Strategy {
+		class QSnapshotStrategy : public QSnapshot::Strategy {
 		public:
-			static std::function< Strategy * ( QSnapshot * ) > & creator();
-			static Strategy * createInstance( QSnapshot * host );
-
-			virtual ~Strategy();
+			explicit QSnapshotStrategy( QSnapshot * host );
 
 			virtual void fastHide();
 			virtual void fastShow();
 
-		protected:
-			explicit Strategy( QSnapshot * host );
-			QSnapshot * host;
-
-		private:
-			Strategy( const Strategy & );
-			Strategy & operator =( const Strategy & );
+			bool compositing;
+			QPoint origPos;
 		};
 
 	}
