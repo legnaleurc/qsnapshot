@@ -86,24 +86,23 @@ namespace {
 		QPixmap pm( QPixmap::grabWindow( QX11Info::appRootWindow(), x, y, w, h ) );
 
 #ifdef HAVE_X11_EXTENSIONS_SHAPE_H
-		int tmp1, tmp2;
-		//Check whether the extension is available
-		if ( XShapeQueryExtension( QX11Info::display(), &tmp1, &tmp2 ) ) {
+		int tmp1 = 0, tmp2 = 0;
+		// Check whether the extension is available
+		if( XShapeQueryExtension( QX11Info::display(), &tmp1, &tmp2 ) ) {
 			QBitmap mask( w, h );
-			//As the first step, get the mask from XShape.
-			int count, order;
-			XRectangle* rects = XShapeGetRectangles( QX11Info::display(), child,
-								 ShapeBounding, &count, &order );
-			//The ShapeBounding region is the outermost shape of the window;
-			//ShapeBounding - ShapeClipping is defined to be the border.
-			//Since the border area is part of the window, we use bounding
+			// As the first step, get the mask from XShape.
+			int count = 0, order = 0;
+			XRectangle* rects = XShapeGetRectangles( QX11Info::display(), child, ShapeBounding, &count, &order );
+			// The ShapeBounding region is the outermost shape of the window;
+			// ShapeBounding - ShapeClipping is defined to be the border.
+			// Since the border area is part of the window, we use bounding
 			// to limit our work region
-			if (rects) {
+			if( rects ) {
 				//Create a QRegion from the rectangles describing the bounding mask.
 				QRegion contents;
-				for ( int pos = 0; pos < count; pos++ )
-				contents += QRegion( rects[pos].x, rects[pos].y,
-							 rects[pos].width, rects[pos].height );
+				for( int pos = 0; pos < count; pos++ ) {
+					contents += QRegion( rects[pos].x, rects[pos].y, rects[pos].width, rects[pos].height );
+				}
 				XFree( rects );
 
 				//Create the bounding box.
@@ -119,16 +118,19 @@ namespace {
 
 				//Get the masked away area.
 				QRegion maskedAway = bbox - contents;
-				QVector<QRect> maskedAwayRects = maskedAway.rects();
+				if( !maskedAway.isEmpty() ) {
+					QVector< QRect > maskedAwayRects = maskedAway.rects();
 
-				//Construct a bitmap mask from the rectangles
-				QPainter p(&mask);
-				p.fillRect(0, 0, w, h, Qt::color1);
-				for (int pos = 0; pos < maskedAwayRects.count(); pos++)
-					p.fillRect(maskedAwayRects[pos], Qt::color0);
-				p.end();
+					//Construct a bitmap mask from the rectangles
+					QPainter p( &mask );
+					p.fillRect( 0, 0, w, h, Qt::color1 );
+					for( auto it = maskedAwayRects.begin(); it != maskedAwayRects.end(); ++it ) {
+						p.fillRect( *it, Qt::color0 );
+					}
+					p.end();
 
-				pm.setMask(mask);
+					pm.setMask(mask);
+				}
 			}
 		}
 #endif // HAVE_X11_EXTENSIONS_SHAPE_H
