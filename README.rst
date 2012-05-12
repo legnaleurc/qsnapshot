@@ -46,8 +46,8 @@ How to install
 
     make install
 
-How to build package
---------------------
+How to build package (Mac OS X and Windows only)
+------------------------------------------------
 
 ::
 
