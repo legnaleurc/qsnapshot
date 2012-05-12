@@ -53,15 +53,28 @@ How to build package (Mac OS X and Windows only)
 
     make package
 
+How to build package for Debian
+-------------------------------
+
+Please refer to `qsnapshot-debian`_, which uses `git-buildpackage`_.
+
+How to build package for Ubuntu
+-------------------------------
+
+Please refer to `qsnapshot-ubuntu`_, which uses `git-buildpackage`_.
+
 .. [#] Since `XCode`_ does not provide this version, you could use `MacPorts`_
     or `Homebrew`_ to install one.
 
 .. _CMake: http://www.cmake.org/
+.. _git-buildpackage: http://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.html
 .. _GNU Compiler Collection: http://gcc.gnu.org/
 .. _Homebrew: http://mxcl.github.com/homebrew/
 .. _MacPorts: http://www.macports.org/
 .. _Microsoft Visual C++: http://www.microsoft.com/visualstudio/en-us/products/2010-editions
 .. _KSnapshot: http://kde.org/applications/graphics/ksnapshot/
+.. _qsnapshot-debian: https://github.com/legnaleurc/qsnapshot-debian
+.. _qsnapshot-ubuntu: https://github.com/legnaleurc/qsnapshot-ubuntu
 .. _Qt: http://qt.nokia.com/products/
 .. _X11 libraries: http://www.x.org/wiki/
 .. _X11 shape extension: http://www.x.org/releases/X11R7.6/doc/libXext/shapelib.html
