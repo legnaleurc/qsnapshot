@@ -20,11 +20,27 @@
 
 using qsnapshot::widget::QSnapshot;
 
+/**
+ * @class qsnapshot::widget::QSnapshot::Strategy
+ * @brief Strategy of each window system for qsnapshot::widget::QSnapshot.
+ */
+
+/**
+ * @brief Current Strategy instance creator.
+ * @return A creator functor. May be nullptr.
+ * @todo return a smart pointer
+ *
+ * If the functor is nullptr, createInstance will use default Strategy.
+ */
 std::function< QSnapshot::Strategy * ( QSnapshot * ) > & QSnapshot::Strategy::creator() {
 	static std::function< Strategy * ( QSnapshot * ) > f = nullptr;
 	return f;
 }
 
+/**
+ * @brief Creates Strategy instance.
+ * @return Strategy instance
+ */
 QSnapshot::Strategy * QSnapshot::Strategy::createInstance( QSnapshot * host ) {
 	if( Strategy::creator() == nullptr ) {
 		return new Strategy( host );
@@ -32,17 +48,36 @@ QSnapshot::Strategy * QSnapshot::Strategy::createInstance( QSnapshot * host ) {
 	return Strategy::creator()( host );
 }
 
+/**
+ * @brief Constructor.
+ * @param host The strategy host
+ */
 QSnapshot::Strategy::Strategy( QSnapshot * host ):
 host( host ) {
 }
 
+/**
+ * @brief Destructor.
+ */
 QSnapshot::Strategy::~Strategy() {
 }
 
+/**
+ * @brief Hides QSnapshot immediatly.
+ * @sa fastShow
+ *
+ * This function should disable all window effects temporary.
+ */
 void QSnapshot::Strategy::fastHide() {
 	this->host->hide();
 }
 
+/**
+ * @brief Shows QSnapshot immediatly.
+ * @sa fastHide
+ *
+ * This function should restore window effects which disabled by fastHide.
+ */
 void QSnapshot::Strategy::fastShow() {
 	this->host->show();
 }

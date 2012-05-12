@@ -20,11 +20,27 @@
 
 using qsnapshot::widget::FocusGrabber;
 
+/**
+ * @class qsnapshot::widget::FocusGrabber::Strategy
+ * @brief Strategy of each window system for qsnapshot::widget::FocusGrabber.
+ */
+
+/**
+ * @brief Current Strategy instance creator.
+ * @return A creator functor. May be nullptr.
+ * @todo return a smart pointer
+ *
+ * If the functor is nullptr, createInstance will use default Strategy.
+ */
 std::function< FocusGrabber::Strategy * ( FocusGrabber * ) > & FocusGrabber::Strategy::creator() {
 	static std::function< Strategy * ( FocusGrabber * ) > f = nullptr;
 	return f;
 }
 
+/**
+ * @brief Creates Strategy instance.
+ * @return Strategy instance
+ */
 FocusGrabber::Strategy * FocusGrabber::Strategy::createInstance( FocusGrabber * host ) {
 	if( Strategy::creator() == nullptr ) {
 		return new Strategy( host );
@@ -32,13 +48,25 @@ FocusGrabber::Strategy * FocusGrabber::Strategy::createInstance( FocusGrabber * 
 	return Strategy::creator()( host );
 }
 
+/**
+ * @brief Constructor.
+ * @param host The strategy host
+ */
 FocusGrabber::Strategy::Strategy( FocusGrabber * host ):
 host( host ) {
 }
 
+/**
+ * @brief Destructor.
+ */
 FocusGrabber::Strategy::~Strategy() {
 }
 
+/**
+ * @brief Post-initialization for FocusGrabber.
+ *
+ * This function will call by FocusGrabber's constructor.
+ */
 void FocusGrabber::Strategy::postNew() {
 	// except X11, somehow opacity == 0.0 will block events
 	this->host->setWindowOpacity( 0.1 );
