@@ -19,8 +19,9 @@
 #include "qsnapshotprivate.hpp"
 #include "savingdialog.hpp"
 
-#include <QtGui/QDesktopWidget>
 #include <QtCore/QTimer>
+#include <QtGui/QDesktopWidget>
+#include <QtGui/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QFileDialog>
 #include <QtGui/QClipboard>
@@ -44,6 +45,8 @@ namespace i18n {
 
 	const QString DELAY_SUFFIX = QObject::tr( " second(s)", "" );
 	const QString REGION_TIP = QObject::tr( "Preview of the snapshot image (%1 x %2)" );
+	const QString HELP_TITLE = QObject::tr( "About QSnapshot" );
+	const QString VERSION = QObject::tr( "Version" );
 
 }
 
@@ -73,6 +76,7 @@ modified( false ) {
 	this->connect( this->ui.newSnapshot, SIGNAL( clicked() ), SLOT( grab() ) );
 	this->connect( this->ui.saveAs, SIGNAL( clicked() ), SLOT( onSaveAs() ) );
 	this->connect( this->ui.copy, SIGNAL( clicked() ), SLOT( onCopy() ) );
+	this->connect( this->ui.help, SIGNAL( clicked() ), SLOT( onHelp() ) );
 	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( startGrab() ) );
 	this->connect( this->regionGrabber, SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
@@ -89,6 +93,13 @@ void QSnapshot::Private::onSaveAs() {
 void QSnapshot::Private::onCopy() {
 	QClipboard * cb = QApplication::clipboard();
 	cb->setPixmap( this->snapshot );
+}
+
+void QSnapshot::Private::onHelp() {
+	QMessageBox::information( this->host, i18n::HELP_TITLE, QString(
+		"<table>"
+			"<tr><th>%1</th><td>%2</td></tr>"
+		"</table>" ).arg( i18n::VERSION ).arg( qApp->applicationVersion() ) );
 }
 
 void QSnapshot::Private::grab() {
