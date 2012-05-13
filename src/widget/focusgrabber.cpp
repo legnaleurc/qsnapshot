@@ -21,6 +21,7 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
+#include <QtGui/QMouseEvent>
 
 using qsnapshot::widget::FocusGrabber;
 
@@ -34,4 +35,10 @@ s_( Strategy::createInstance( this ) ) {
 	this->setPalette( p );
 
 	this->s_->postNew();
+}
+
+void FocusGrabber::mousePressEvent( QMouseEvent * event ) {
+	if( event->button() == Qt::LeftButton ) {
+		emit this->clicked();
+	}
 }

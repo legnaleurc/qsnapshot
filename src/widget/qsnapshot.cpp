@@ -77,6 +77,7 @@ modified( false ) {
 	this->connect( this->ui.saveAs, SIGNAL( clicked() ), SLOT( onSaveAs() ) );
 	this->connect( this->ui.copy, SIGNAL( clicked() ), SLOT( onCopy() ) );
 	this->connect( this->ui.help, SIGNAL( clicked() ), SLOT( onHelp() ) );
+	this->connect( this->grabber.get(), SIGNAL( clicked() ), SLOT( performGrab() ) );
 	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( startGrab() ) );
 	this->connect( this->regionGrabber.get(), SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
@@ -222,9 +223,6 @@ void QSnapshot::Private::startGrab() {
 QSnapshot::QSnapshot() :
 QWidget(),
 p_( new Private( this ) ) {
-	// NOTE somehow eventFilter will be triggered between
-	// new Private( this ) and p_ = new Private
-	this->p_->grabber->installEventFilter( this );
 }
 
 void QSnapshot::changeEvent( QEvent * e ) {
@@ -236,17 +234,4 @@ void QSnapshot::changeEvent( QEvent * e ) {
 	default:
 		break;
 	}
-}
-
-bool QSnapshot::eventFilter( QObject * object, QEvent * event ) {
-	if( object == this->p_->grabber.get() && event->type() == QEvent::MouseButtonPress ) {
-		QMouseEvent * me = dynamic_cast< QMouseEvent * >( event );
-		if( this->QWidget::mouseGrabber() != this->p_->grabber.get() ) {
-			return false;
-		}
-		if( me->button() == Qt::LeftButton ) {
-			this->p_->performGrab();
-		}
-	}
-	return false;
 }

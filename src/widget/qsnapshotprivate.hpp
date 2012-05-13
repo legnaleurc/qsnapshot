@@ -38,7 +38,6 @@ namespace qsnapshot {
 			explicit Private( QSnapshot * host );
 
 			void grabRegion();
-			void performGrab();
 			void updatePreview();
 			void setPreview( const QPixmap & pixmap );
 
@@ -53,6 +52,7 @@ namespace qsnapshot {
 			void grab();
 			void onRegionGrabbed( const QPixmap & p );
 			void onWindowGrabbed( const QPixmap & p );
+			void performGrab();
 			void startGrab();
 
 		public:

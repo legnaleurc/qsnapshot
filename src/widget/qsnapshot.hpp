@@ -34,7 +34,6 @@ namespace qsnapshot {
 
 		protected:
 			virtual void changeEvent( QEvent * event );
-			virtual bool eventFilter( QObject * object, QEvent * event );
 
 		private:
 			class Private;

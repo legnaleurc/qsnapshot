@@ -27,10 +27,17 @@ namespace qsnapshot {
 	namespace widget {
 
 		class FocusGrabber : public QWidget {
+			Q_OBJECT
+
 		public:
 			class Strategy;
 
 			FocusGrabber();
+
+			virtual void mousePressEvent( QMouseEvent * event );
+
+		signals:
+			void clicked();
 
 		private:
 			std::shared_ptr< Strategy > s_;
