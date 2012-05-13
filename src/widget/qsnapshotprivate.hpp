@@ -61,7 +61,7 @@ namespace qsnapshot {
 			std::unique_ptr< QSnapshot::Strategy > strategy;
 			std::unique_ptr< FocusGrabber > grabber;
 			SnapshotTimer * grabTimer;
-			RegionGrabber * regionGrabber;
+			std::unique_ptr< RegionGrabber > regionGrabber;
 			std::shared_ptr< WindowGrabber > windowGrabber;
 			QPixmap snapshot;
 			QPoint savedPosition;

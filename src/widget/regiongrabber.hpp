@@ -27,7 +27,7 @@ namespace qsnapshot {
 		class RegionGrabber : public AbstractGrabber {
 			Q_OBJECT
 		public:
-			explicit RegionGrabber( QWidget * widget );
+			RegionGrabber();
 
 			void grab();
 

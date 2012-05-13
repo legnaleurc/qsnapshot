@@ -151,8 +151,8 @@ void RegionGrabber::Private::finishGrab() {
 	this->selection = QRect();
 }
 
-RegionGrabber::RegionGrabber( QWidget * parent ):
-AbstractGrabber( parent, Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Tool ),
+RegionGrabber::RegionGrabber():
+AbstractGrabber( 0, Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint ),
 p_( new Private( this ) ) {
 	this->setMouseTracking( true );
 

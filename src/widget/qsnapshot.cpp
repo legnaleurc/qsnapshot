@@ -60,7 +60,7 @@ strategy( Strategy::createInstance( host ) ),
 // NOTE Windows and Mac OS X flag
 grabber( new FocusGrabber ),
 grabTimer( new SnapshotTimer( host ) ),
-regionGrabber( new RegionGrabber( this->host ) ),
+regionGrabber( new RegionGrabber ),
 windowGrabber( new WindowGrabber( 0 ) ),
 snapshot(),
 savedPosition(),
@@ -78,7 +78,7 @@ modified( false ) {
 	this->connect( this->ui.copy, SIGNAL( clicked() ), SLOT( onCopy() ) );
 	this->connect( this->ui.help, SIGNAL( clicked() ), SLOT( onHelp() ) );
 	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( startGrab() ) );
-	this->connect( this->regionGrabber, SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
+	this->connect( this->regionGrabber.get(), SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
 }
 
