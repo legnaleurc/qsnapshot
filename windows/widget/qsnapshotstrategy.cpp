@@ -18,6 +18,9 @@
 */
 #include "qsnapshotstrategy.hpp"
 
+#include <Windows.h>
+#include <WinUser.h>
+
 # include <QtCore/QLibrary>
 
 using qsnapshot::widget::QSnapshot;
@@ -40,6 +43,11 @@ QSnapshotStrategy::QSnapshotStrategy( QSnapshot * host ):
 QSnapshot::Strategy( host ),
 // load dll at run-time because Windows XP does not support DWM
 f( reinterpret_cast< Function >( QLibrary::resolve( "dwmapi", "DwmSetWindowAttribute" ) ) ) {
+	RegisterHotKey( host->winId(), 0, MOD_NOREPEAT, VK_SNAPSHOT );
+}
+
+QSnapshotStrategy::~QSnapshotStrategy() {
+	UnregisterHotKey( this->host->winId(), 0 );
 }
 
 void QSnapshotStrategy::fastHide() {

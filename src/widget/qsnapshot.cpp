@@ -26,6 +26,11 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QClipboard>
 
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#include <WinUser.h>
+#endif
+
 namespace {
 
 	const int ChildWindow = 3;
@@ -235,3 +240,15 @@ void QSnapshot::changeEvent( QEvent * e ) {
 		break;
 	}
 }
+
+#ifdef Q_OS_WIN
+
+bool QSnapshot::winEvent( MSG * message, long * result ) {
+	if( message->message == WM_HOTKEY ) {
+		this->p_->grab();
+		return true;
+	}
+	return false;
+}
+
+#endif

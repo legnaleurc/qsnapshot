@@ -34,6 +34,9 @@ namespace qsnapshot {
 
 		protected:
 			virtual void changeEvent( QEvent * event );
+#ifdef Q_OS_WIN
+			virtual bool winEvent( MSG * message, long * result );
+#endif
 
 		private:
 			class Private;

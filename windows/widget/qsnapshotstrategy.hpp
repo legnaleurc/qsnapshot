@@ -31,6 +31,7 @@ namespace qsnapshot {
 			typedef HRESULT ( WINAPI * Function )( HWND, DWORD, LPCVOID, DWORD );
 
 			explicit QSnapshotStrategy( QSnapshot * host );
+			virtual ~QSnapshotStrategy();
 
 			virtual void fastHide();
 			virtual void fastShow();
