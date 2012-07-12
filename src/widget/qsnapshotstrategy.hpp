@@ -26,23 +26,29 @@
 namespace qsnapshot {
 	namespace widget {
 
-		class QSnapshot::Strategy {
+		class QSnapshot::Strategy: public QObject {
+			Q_OBJECT
 		public:
 			static std::function< Strategy * ( QSnapshot * ) > & creator();
 			static Strategy * createInstance( QSnapshot * host );
 
 			virtual ~Strategy();
 
+			virtual void initialize();
+
 			virtual void fastHide();
 			virtual void fastShow();
+
+#ifdef Q_WS_WIN
+			virtual bool platformEvent( MSG * message, long * result );
+#endif
 
 		protected:
 			explicit Strategy( QSnapshot * host );
 			QSnapshot * host;
 
-		private:
-			Strategy( const Strategy & );
-			Strategy & operator =( const Strategy & );
+		signals:
+			void requestGrabbing();
 		};
 
 	}

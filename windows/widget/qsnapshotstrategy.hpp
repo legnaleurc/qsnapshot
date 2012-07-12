@@ -33,8 +33,12 @@ namespace qsnapshot {
 			explicit QSnapshotStrategy( QSnapshot * host );
 			virtual ~QSnapshotStrategy();
 
+			virtual void initialize();
+
 			virtual void fastHide();
 			virtual void fastShow();
+
+			virtual bool platformEvent( MSG * message, long * result );
 
 			void disableDWM( bool disable );
 

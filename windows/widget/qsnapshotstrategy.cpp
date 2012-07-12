@@ -43,11 +43,14 @@ QSnapshotStrategy::QSnapshotStrategy( QSnapshot * host ):
 QSnapshot::Strategy( host ),
 // load dll at run-time because Windows XP does not support DWM
 f( reinterpret_cast< Function >( QLibrary::resolve( "dwmapi", "DwmSetWindowAttribute" ) ) ) {
-	RegisterHotKey( host->winId(), 0, MOD_NOREPEAT, VK_SNAPSHOT );
 }
 
 QSnapshotStrategy::~QSnapshotStrategy() {
 	UnregisterHotKey( this->host->winId(), 0 );
+}
+
+void QSnapshotStrategy::initialize() {
+	RegisterHotKey( host->winId(), 0, MOD_NOREPEAT, VK_SNAPSHOT );
 }
 
 void QSnapshotStrategy::fastHide() {
@@ -58,6 +61,14 @@ void QSnapshotStrategy::fastHide() {
 void QSnapshotStrategy::fastShow() {
 	this->disableDWM( false );
 	this->host->show();
+}
+
+bool QSnapshotStrategy::platformEvent( MSG * message, long * result ) {
+	if( message->message == WM_HOTKEY ) {
+		emit this->requestGrabbing();
+		return true;
+	}
+	return false;
 }
 
 void QSnapshotStrategy::disableDWM( bool disable ) {

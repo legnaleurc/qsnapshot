@@ -53,6 +53,7 @@ QSnapshot::Strategy * QSnapshot::Strategy::createInstance( QSnapshot * host ) {
  * @param host The strategy host
  */
 QSnapshot::Strategy::Strategy( QSnapshot * host ):
+QObject(),
 host( host ) {
 }
 
@@ -60,6 +61,9 @@ host( host ) {
  * @brief Destructor.
  */
 QSnapshot::Strategy::~Strategy() {
+}
+
+void QSnapshot::Strategy::initialize() {
 }
 
 /**
@@ -81,3 +85,11 @@ void QSnapshot::Strategy::fastHide() {
 void QSnapshot::Strategy::fastShow() {
 	this->host->show();
 }
+
+#ifdef Q_WS_WIN
+
+bool QSnapshot::Strategy::platformEvent( MSG *, long * ) {
+	return false;
+}
+
+#endif

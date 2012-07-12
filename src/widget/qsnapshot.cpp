@@ -26,11 +26,6 @@
 #include <QtGui/QFileDialog>
 #include <QtGui/QClipboard>
 
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#include <WinUser.h>
-#endif
-
 namespace {
 
 	const int ChildWindow = 3;
@@ -86,6 +81,7 @@ modified( false ) {
 	this->connect( this->grabTimer, SIGNAL( timeout() ), SLOT( startGrab() ) );
 	this->connect( this->regionGrabber.get(), SIGNAL( regionGrabbed( const QPixmap & ) ), SLOT( onRegionGrabbed( const QPixmap & ) ) );
 	this->connect( this->windowGrabber.get(), SIGNAL( windowGrabbed( const QPixmap & ) ), SLOT( onWindowGrabbed( const QPixmap & ) ) );
+	this->connect( this->strategy.get(), SIGNAL( requestGrabbing() ), SLOT( grab() ) );
 }
 
 void QSnapshot::Private::onSaveAs() {
@@ -228,6 +224,8 @@ void QSnapshot::Private::startGrab() {
 QSnapshot::QSnapshot() :
 QWidget(),
 p_( new Private( this ) ) {
+	// NOTE some special system call must wait for GUI component
+	this->p_->strategy->initialize();
 }
 
 void QSnapshot::changeEvent( QEvent * e ) {
@@ -241,14 +239,10 @@ void QSnapshot::changeEvent( QEvent * e ) {
 	}
 }
 
-#ifdef Q_OS_WIN
+#ifdef Q_WS_WIN
 
 bool QSnapshot::winEvent( MSG * message, long * result ) {
-	if( message->message == WM_HOTKEY ) {
-		this->p_->grab();
-		return true;
-	}
-	return false;
+	return this->p_->strategy->platformEvent( message, result );
 }
 
 #endif
