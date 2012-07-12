@@ -27,6 +27,8 @@ set(QSNAPSHOT_VERSION "${QSNAPSHOT_VERSION_MAJOR}.${QSNAPSHOT_VERSION_MINOR}.${Q
 
 if(UNIX AND NOT APPLE)
     find_package(Qt4 4.6 REQUIRED COMPONENTS QtDBus)
+else()
+    find_package(Qt4 4.6 REQUIRED)
 endif()
 if(UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
