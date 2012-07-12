@@ -17,11 +17,13 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "qsnapshotstrategy.hpp"
+#include "qsnapshotadaptor.h"
 
 #include <X11/Xlib.h>
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QTimer>
+#include <QtDBus/QDBusConnection>
 #include <QtGui/QDesktopWidget>
 #include <QtGui/QX11Info>
 
@@ -51,12 +53,28 @@ QSnapshotStrategy::QSnapshotStrategy( QSnapshot * host ):
 QSnapshot::Strategy( host ),
 compositing( false ),
 origPos( host->pos() ) {
+}
+
+void QSnapshotStrategy::initialize() {
 	Display * dpy = QX11Info::display();
 	char net_wm_cm_name[20];
 	snprintf( net_wm_cm_name, 20, "_NET_WM_CM_S%d", DefaultScreen( dpy ) );
 	Atom net_wm_cm = XInternAtom( dpy, net_wm_cm_name, 0 );
 	Window wm_owner = XGetSelectionOwner( dpy, net_wm_cm );
 	this->compositing = wm_owner != None;
+
+	QDBusConnection dbus = QDBusConnection::sessionBus();
+	if( !dbus.registerService( QString( "org.foolproofproject.QSnapshot-%1" ).arg( QCoreApplication::instance()->applicationPid() ) ) ) {
+		// TODO throw exception
+		return;
+	}
+	if( !dbus.registerObject( "/", this ) ) {
+		// TODO throw exception
+		return;
+	}
+
+	QSnapshotAdaptor * adaptor = new QSnapshotAdaptor( this );
+	Q_UNUSED( adaptor );
 }
 
 void QSnapshotStrategy::fastHide() {
@@ -72,4 +90,8 @@ void QSnapshotStrategy::fastHide() {
 void QSnapshotStrategy::fastShow() {
 	this->host->move( this->origPos );
 	this->host->show();
+}
+
+void QSnapshotStrategy::grab() {
+	emit this->requestGrabbing();
 }

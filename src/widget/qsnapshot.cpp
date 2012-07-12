@@ -246,3 +246,11 @@ bool QSnapshot::winEvent( MSG * message, long * result ) {
 }
 
 #endif
+
+#ifdef Q_WS_X11
+
+bool QSnapshot::x11Event( XEvent * event ) {
+	return this->p_->strategy->platformEvent( event );
+}
+
+#endif

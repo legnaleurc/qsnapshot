@@ -93,3 +93,11 @@ bool QSnapshot::Strategy::platformEvent( MSG *, long * ) {
 }
 
 #endif
+
+#ifdef Q_WS_X11
+
+bool QSnapshot::Strategy::platformEvent( XEvent * ) {
+	return false;
+}
+
+#endif

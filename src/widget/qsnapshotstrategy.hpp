@@ -42,6 +42,9 @@ namespace qsnapshot {
 #ifdef Q_WS_WIN
 			virtual bool platformEvent( MSG * message, long * result );
 #endif
+#ifdef Q_WS_X11
+			virtual bool platformEvent( XEvent * event );
+#endif
 
 		protected:
 			explicit Strategy( QSnapshot * host );

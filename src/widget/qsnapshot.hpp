@@ -37,6 +37,9 @@ namespace qsnapshot {
 #ifdef Q_WS_WIN
 			virtual bool winEvent( MSG * message, long * result );
 #endif
+#ifdef Q_WS_X11
+			virtual bool x11Event( XEvent * event );
+#endif
 
 		private:
 			class Private;

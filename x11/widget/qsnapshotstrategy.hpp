@@ -28,8 +28,11 @@ namespace qsnapshot {
 		public:
 			explicit QSnapshotStrategy( QSnapshot * host );
 
+			virtual void initialize();
 			virtual void fastHide();
 			virtual void fastShow();
+
+			void grab();
 
 			bool compositing;
 			QPoint origPos;
