@@ -16,15 +16,11 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#import "inspector.h"
-#import "UIElementUtilities.h"
-
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
 
-#import <QtGui/QApplication>
-#import <QtGui/QDesktopWidget>
-#import <QtCore/QDataStream>
+#import "UIElementUtilities.h"
+#import "inspector.hpp"
 
 const int MIN_SIZE = 8;
 
@@ -59,23 +55,23 @@ NSArray * subelementsFromElement( AXUIElementRef element ) {
 	return [subElements autorelease];
 }
 
-QRect rectOfElement( AXUIElementRef element ) {
+Rectangle rectOfElement( AXUIElementRef element ) {
 	NSRect bounds = [UIElementUtilities frameOfUIElement:element];
 	// NOTE y position is count from bottom in Cocoa
-	int realY = QApplication::desktop()->screenGeometry().height() - bounds.origin.y - bounds.size.height;
-	return QRect( bounds.origin.x, realY, bounds.size.width, bounds.size.height );
+	int realY = getScreenHeight() - bounds.origin.y - bounds.size.height;
+	return Rectangle( bounds.origin.x, realY, bounds.size.width, bounds.size.height );
 }
 
-void getWindows( QVector< QRect > & windows, AXUIElementRef element ) {
+void getWindows( std::vector< Rectangle > & windows, AXUIElementRef element ) {
 	NSString * roleName = [UIElementUtilities roleOfUIElement:element];
 	bool scrollFix = [roleName isEqualToString:@"AXScrollArea"];
-	QRect parentRect( rectOfElement( element ) );
+	Rectangle parentRect( rectOfElement( element ) );
 
 	NSArray * children = subelementsFromElement( element );
 	NSEnumerator * e = [children objectEnumerator];
 	AXUIElementRef child = nil;
 	while( child = ( AXUIElementRef )[e nextObject] ) {
-		QRect r( rectOfElement( child ) );
+		Rectangle r( rectOfElement( child ) );
 		if( scrollFix ) {
 			r = r.intersected( parentRect );
 		}
@@ -85,10 +81,6 @@ void getWindows( QVector< QRect > & windows, AXUIElementRef element ) {
 		windows.push_back( r );
 		getWindows( windows, child );
 	}
-}
-
-bool operator< ( const QRect& r1, const QRect& r2 ) {
-	return r1.width() * r1.height() < r2.width() * r2.height();
 }
 
 AXUIElementRef getCurrentUIElement() {
@@ -108,50 +100,24 @@ AXUIElementRef getCurrentUIElement() {
 	return currentUIElement;
 }
 
-/**
- * @brief C wrapper for finding sub-window
- * @return A serialized binary data by QDataStream, format is QPixmap,
- * QVector< QRect > . The allocated memory must free by hand.
- */
-int grabWindow( char * * data ) {
-	AXUIElementRef currentUIElement = getCurrentUIElement();
-	QRect r( rectOfElement( currentUIElement ) );
-	if ( r.isEmpty() ) {
-		return -1;
-	}
-
-	QVector< QRect > windows;
-	windows.push_back( r );
-	getWindows( windows, currentUIElement );
-	std::sort( windows.begin(), windows.end() );
-	QPixmap pm( QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() ) );
-
-	QByteArray buffer;
-	QDataStream sout( &buffer, QIODevice::WriteOnly );
-	sout << pm << windows;
-	*data = static_cast< char * >( std::malloc( buffer.size() ) );
-	std::memcpy( *data, buffer.constData(), buffer.size() );
-	return buffer.size();
+bool operator< ( const Rectangle & r1, const Rectangle & r2 ) {
+	return r1.width() * r1.height() < r2.width() * r2.height();
 }
 
-/**
- * @brief C wrapper for find current window
- * @param includeDecorations include window decorations
- * @return A serialized binary data by QDataStream, format is QPixmap,
- * QPoint . The allocated memory must free by hand.
- */
-int grabCurrent( char * * data, int /*includeDecorations*/ ) {
+Grabber::Grabber():
+windows(),
+ui( NULL ) {
 	AXUIElementRef currentUIElement = getCurrentUIElement();
-	QRect r( rectOfElement( currentUIElement ) );
-	if( r.isEmpty() ) {
-		return -1;
-	}
-	QPixmap pm( QPixmap::grabWindow( QApplication::desktop()->winId(), r.x(), r.y(), r.width(), r.height() ) );
+	Rectangle r( rectOfElement( currentUIElement ) );
+	this->windows.push_back( r );
+	this->ui = currentUIElement;
+}
 
-	QByteArray buffer;
-	QDataStream sout( &buffer, QIODevice::WriteOnly );
-	sout << pm << r.topLeft();
-	*data = static_cast< char * >( std::malloc( buffer.size() ) );
-	std::memcpy( *data, buffer.constData(), buffer.size() );
-	return buffer.size();
+bool Grabber::isEmpty() const {
+	return this->windows.back().isEmpty();
+}
+
+void Grabber::traverse() {
+	getWindows( this->windows, ( AXUIElementRef )this->ui );
+	std::sort( this->windows.begin(), this->windows.end() );
 }

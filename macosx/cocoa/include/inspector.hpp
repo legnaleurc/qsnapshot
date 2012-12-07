@@ -16,19 +16,35 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef QSNAPSHOT_UTILITY_INSPECTOR_H
-#define QSNAPSHOT_UTILITY_INSPECTOR_H
+#ifndef QSNAPSHOT_UTILITY_INSPECTOR_HPP
+#define QSNAPSHOT_UTILITY_INSPECTOR_HPP
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <vector>
 
-int grabWindow( char * * data );
+class QRect;
 
-int grabCurrent( char * * data, int includeDecorations );
+struct Rectangle {
+	Rectangle( int x, int y, int w, int h );
+	Rectangle( const Rectangle & that );
+	~Rectangle();
+	Rectangle & operator =( const Rectangle & that );
+	Rectangle intersected( const Rectangle & that ) const;
+	bool isEmpty() const;
+	int x() const;
+	int y() const;
+	int width() const;
+	int height() const;
+	QRect * r;
+};
 
-#ifdef __cplusplus
-}
-#endif
+struct Grabber {
+	Grabber();
+	bool isEmpty() const;
+	void traverse();
+	std::vector< Rectangle > windows;
+	const void * ui;
+};
+
+int getScreenHeight();
 
 #endif
