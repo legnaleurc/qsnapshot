@@ -16,17 +16,16 @@ Build dependency
 
 You need following tools:
 
-* `CMake`_ >= 2.6
+* `CMake`_ >= 2.8
 * `Qt`_
 * toolchain with C++0x support
     * Microsoft Windows
         `Microsoft Visual C++`_ >= 2010
     * Mac OS X
-        * `XCode`_
-        * `GNU Compiler Collection`_ >= 4.6 [#]_
+        * `XCode`_ >= 4.4
     * GNU/Linux
         * `GNU Compiler Collection`_ >= 4.6
-	* `X11 libraries`_
+        * `X11 libraries`_
         * `X11 shape extension`_ (optional)
 
 How to build
@@ -62,9 +61,6 @@ How to build package for Ubuntu
 -------------------------------
 
 Please refer to `qsnapshot-ubuntu`_, which uses `git-buildpackage`_.
-
-.. [#] Since `XCode`_ does not provide this version, you could use `MacPorts`_
-    or `Homebrew`_ to install one.
 
 .. _CMake: http://www.cmake.org/
 .. _git-buildpackage: http://honk.sigxcpu.org/projects/git-buildpackage/manual-html/gbp.html
