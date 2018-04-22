@@ -28,6 +28,7 @@ int main( int argc, char * argv[] ) {
 
 	QApplication::setApplicationName( "QSnapshot" );
 	QApplication::setApplicationVersion( QSNAPSHOT_STRINGIZER( QSNAPSHOT_VERSION ) );
+	QApplication::setAttribute( Qt::AA_EnableHighDpiScaling );
 	QApplication::setWindowIcon( QIcon( ":/share/pixmap/logo.png" ) );
 
 	qsnapshot::widget::QSnapshot w;

@@ -97,7 +97,8 @@ elseif(APPLE)
         MACOSX_BUNDLE_LONG_VERSION_STRING "version ${QSNAPSHOT_VERSION}"
         MACOSX_BUNDLE_BUNDLE_NAME "QSnapshot"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "v${QSNAPSHOT_VERSION}"
-        MACOSX_BUNDLE_BUNDLE_VERSION "${QSNAPSHOT_VERSION}")
+        MACOSX_BUNDLE_BUNDLE_VERSION "${QSNAPSHOT_VERSION}"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/cmake/modules/MacOSXBundleInfo.plist.in")
 else()
     add_executable(QSnapshot ${QSNAPSHOT_COMPILE_UNITS})
     target_link_libraries(QSnapshot Qt5::Core Qt5::Widgets)
