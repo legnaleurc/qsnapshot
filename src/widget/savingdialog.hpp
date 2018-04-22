@@ -19,7 +19,7 @@
 #ifndef QSNAPSHOT_WIDGET_SAVINGDIALOG_HPP
 #define QSNAPSHOT_WIDGET_SAVINGDIALOG_HPP
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace qsnapshot {
 	namespace widget {

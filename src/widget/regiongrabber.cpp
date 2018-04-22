@@ -18,10 +18,10 @@
 */
 #include "regiongrabberprivate.hpp"
 
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
 #include <QtGui/QPainter>
-#include <QtGui/QToolTip>
+#include <QtWidgets/QToolTip>
 #include <QtGui/QMouseEvent>
 
 #include <algorithm>

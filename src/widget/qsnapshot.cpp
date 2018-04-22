@@ -20,10 +20,10 @@
 #include "savingdialog.hpp"
 
 #include <QtCore/QTimer>
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QDesktopWidget>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 #include <QtGui/QClipboard>
 
 namespace {

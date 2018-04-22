@@ -18,13 +18,13 @@
 */
 #include "../../src/widget/savingdialog.hpp"
 
-#include <QtGui/QDesktopServices>
-#include <QtGui/QFileDialog>
+#include <QtCore/QStandardPaths>
+#include <QtWidgets/QFileDialog>
 
 #include <memory>
 
 QString qsnapshot::widget::getSaveFileName( QWidget * parent ) {
-	static QString initPath( QDesktopServices::storageLocation( QDesktopServices::PicturesLocation ) );
+	static QString initPath( QStandardPaths::writableLocation( QStandardPaths::PicturesLocation ) );
 
 	std::unique_ptr< QFileDialog > dialog( new QFileDialog( parent ) );
 

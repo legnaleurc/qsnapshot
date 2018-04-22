@@ -19,7 +19,7 @@
 #ifndef QSNAPSHOT_WIDGET_FOCUSGRABBER_HPP
 #define QSNAPSHOT_WIDGET_FOCUSGRABBER_HPP
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 #include <memory>
 

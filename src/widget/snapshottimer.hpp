@@ -19,7 +19,7 @@
 #ifndef SNAPSHOTTIMER_HPP
 #define SNAPSHOTTIMER_HPP
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace qsnapshot {
 	namespace widget {

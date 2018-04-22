@@ -19,8 +19,8 @@
 #include "focusgrabber.hpp"
 #include "focusgrabberstrategy.hpp"
 
-#include <QtGui/QApplication>
-#include <QtGui/QDesktopWidget>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QDesktopWidget>
 #include <QtGui/QMouseEvent>
 
 using qsnapshot::widget::FocusGrabber;

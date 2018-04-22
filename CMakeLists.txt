@@ -15,41 +15,32 @@
 #    License along with this library; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-cmake_minimum_required(VERSION 2.8)
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
+cmake_minimum_required(VERSION 3.8)
 
 project(QSnapshot)
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+if(UNIX AND NOT APPLE)
+    find_package(X11 REQUIRED)
+endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_DEBUG_POSTFIX d)
+
 set(QSNAPSHOT_VERSION_MAJOR "0")
 set(QSNAPSHOT_VERSION_MINOR "1")
 set(QSNAPSHOT_VERSION_PATCH "1")
 set(QSNAPSHOT_VERSION "${QSNAPSHOT_VERSION_MAJOR}.${QSNAPSHOT_VERSION_MINOR}.${QSNAPSHOT_VERSION_PATCH}")
 
-find_package(Qt4 4.6 REQUIRED)
-if(UNIX AND NOT APPLE)
-    find_package(X11 REQUIRED)
-endif()
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-include(${QT_USE_FILE})
-
 set(HAVE_X11_EXTENSIONS_SHAPE_H ${X11_Xshape_FOUND})
 set(HAVE_X11_EXTENSIONS_XFIXES_H ${X11_Xfixes_FOUND})
-include(InstallRequiredSystemLibraries)
 
 configure_file("${CMAKE_SOURCE_DIR}/cmake/modules/qsnapshot_config.h.in" "qsnapshot_config.h")
-
-set(CMAKE_DEBUG_POSTFIX d)
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pedantic -Wextra -Wall -pipe")
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++ -pedantic -Wextra -Wall -pipe")
-elseif(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-")
-    add_definitions(/D_UNICODE)
-endif()
 
 # hack MSVC path
 if(MSVC OR APPLE)
@@ -92,15 +83,14 @@ source_group("Resource Files" REGULAR_EXPRESSION .*\\.rc)
 source_group("Form Files" FILES ${QSNAPSHOT_FORMS})
 
 set(QSNAPSHOT_COMPILE_UNITS ${QSNAPSHOT_HEADERS} ${QSNAPSHOT_SOURCES} ${QSNAPSHOT_PLATFORM_SOURCES} ${QSNAPSHOT_PLATFORM_HEADERS})
-set(QSNAPSHOT_LINKING_UNITS ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 
 if(MSVC)
     add_executable(QSnapshot WIN32 "qsnapshot.rc" ${QSNAPSHOT_COMPILE_UNITS})
-    target_link_libraries(QSnapshot ${QSNAPSHOT_LINKING_UNITS} ${QT_QTMAIN_LIBRARY})
+    target_link_libraries(QSnapshot Qt5::Core Qt5::Widgets Qt5::Main)
 elseif(APPLE)
     add_executable(QSnapshot MACOSX_BUNDLE "share/pixmap/logo.icns" ${QSNAPSHOT_COMPILE_UNITS})
     add_dependencies(QSnapshot cocoa)
-    target_link_libraries(QSnapshot cocoa ${QSNAPSHOT_LINKING_UNITS} ${COCOA_LIBRARY})
+    target_link_libraries(QSnapshot cocoa Qt5::Core Qt5::Widgets ${COCOA_LIBRARY})
     set_target_properties(QSnapshot PROPERTIES
         MACOSX_BUNDLE_ICON_FILE "logo.icns"
         MACOSX_BUNDLE_GUI_IDENTIFIER "QSnapshot"
@@ -110,11 +100,13 @@ elseif(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION "${QSNAPSHOT_VERSION}")
 else()
     add_executable(QSnapshot ${QSNAPSHOT_COMPILE_UNITS})
-    target_link_libraries(QSnapshot ${QSNAPSHOT_LINKING_UNITS})
+    target_link_libraries(QSnapshot Qt5::Core Qt5::Widgets)
 endif()
 set_target_properties(QSnapshot PROPERTIES VERSION ${QSNAPSHOT_VERSION})
+target_compile_features(QSnapshot PRIVATE cxx_std_11)
 
 # install part
+include(InstallRequiredSystemLibraries)
 install(TARGETS QSnapshot
     RUNTIME DESTINATION "bin" COMPONENT Runtime
     BUNDLE DESTINATION "." COMPONENT Runtime)

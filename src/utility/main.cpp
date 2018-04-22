@@ -20,14 +20,12 @@
 #include "qsnapshot_config.h"
 
 #include <QtCore/QTextCodec>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QtGui/QIcon>
 
 int main( int argc, char * argv[] ) {
 	QApplication a( argc, argv );
 
-	QTextCodec::setCodecForTr( QTextCodec::codecForName( "UTF-8" ) );
-	QTextCodec::setCodecForCStrings( QTextCodec::codecForName( "UTF-8" ) );
 	QApplication::setApplicationName( "QSnapshot" );
 	QApplication::setApplicationVersion( QSNAPSHOT_STRINGIZER( QSNAPSHOT_VERSION ) );
 	QApplication::setWindowIcon( QIcon( ":/share/pixmap/logo.png" ) );

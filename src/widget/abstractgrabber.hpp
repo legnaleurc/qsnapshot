@@ -19,7 +19,7 @@
 #ifndef QSNAPSHOT_WIDGET_ABSTRACTGRABBER_H
 #define QSNAPSHOT_WIDGET_ABSTRACTGRABBER_H
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace qsnapshot {
 	namespace widget {
